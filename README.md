@@ -5,6 +5,13 @@ Validate an Object against a given [swagger (V2.0)](http://swagger.io/specificat
 *Please note:*
 Request validation or the validation of a swagger spec itself is explicitly not intended, only the validation of the objects returned from the server is part of this module. Ensure that your swagger spec is valid to prevent unexpected errors.
 
+# Why this and not some other tool?
+The API is awesome, it gives you easy and full control over what's happening:
+- Every error has a detailed stack trace so you can find where and what is wrong easily
+- Stack traces are in a format that allows computer programs to understand what's wrong without parsing strings
+- You can add your own rules or ignore certain errors
+- Other tools do not like splitted specifications (via *$ref*)
+- Most other tools do not implement very special constraints (like regex, int32/int64, minItems...)
 
 # Features
 ## Validation
@@ -153,9 +160,9 @@ The human readable trace is just a rendered version of `result.errors`, which lo
 
 If you don't like the error types as integers (which will happen if you don't use TypeScript), call `result.errorsWithStringTypes()` and all those errorTypes will be called "MISSING_REQUIRED_PROPERTY", "TYPE_MISMATCH" and "ADDITIONAL_PROPERTY".
 
-## Ways to load a specification
+# Ways to load a specification
 You may load JSON or yaml files from your disk or from the interwebs. It doesn't matter!
-``` Typescript
+```Typescript
 import * as SwaggerValidator from 'swagger-object-validator';
 let validator = new SwaggerValidator.Handler('https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/petstore.yaml');
 // or
@@ -165,6 +172,41 @@ let validator = new SwaggerValidator.Handler('./petstore.json');
 // or
 let petStore = require('./petstore.json');
 let validator = new SwaggerValidator.Handler(petStore);
+```
+
+# Config
+You can hand in a configuration object. Before diving in each of them let's look over it quickly:
+```TypeScript
+interface IValidatorConfig {
+  // for relative $refs:
+  partialsDir?: string;
+
+  // allow additional properties not defined in the Spec
+  allowAdditionalProperties?: boolean;
+
+  // HTTP and HTTPS are allowed by default
+  disallowHttp?: boolean;
+  disallowHttps?: boolean;
+
+  // add custom validation rules (sync and async)
+  customValidation?: (
+    test: any,
+    schema: Swagger.Schema,
+    spec: Swagger.Spec,
+    trace: Array<ITraceStep>,
+    otherErrors: Array<ICustomValidationError>,
+    resolve?: (validationErrors: ICustomValidationError[]) => void,
+    reject?: (reason: string) => void
+  ) => ICustomValidationError[] | void | undefined;
+
+  // you can ignore certain errors
+  ignoreError?: ( // cb to ignore errors
+    error: IValidationError,
+    value: any,
+    schema: Swagger.Schema,
+    spec: Swagger.Spec
+  ) => boolean;
+}
 ```
 
 ## Partials directory for $ref
@@ -188,6 +230,16 @@ let config = {
 let validator = new SwaggerValidator.Handler('spec.yml', config);
 ```
 
+## Disallowing HTTP or HTTPs
+As described in the paragraph above Swagger allows references to the interwebs. If you do not want this you can set a corresponding option:
+```js
+let config = {
+  disallowHttp: true,
+  disallowHttps: true
+};
+let validator = new Handler('http://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/petstore.yaml', config);
+```
+
 ## Allowing Additional properties
 By default, every property that is not specified within the swagger definition adds an
 ADDITIONAL_PROPERTY error to the stack. If you want to allow certain properties you can
@@ -198,6 +250,7 @@ let config: IValidatorConfig = {
     allowAdditionalProperties: true
 };
 ```
+
 
 ## Ignoring errors
 You may want to ignore certain errors. Let's assume you need some magic to allow a certain
@@ -271,10 +324,10 @@ an object field to pass, the Object validator will crash because it expects
 its input to be an object. This hook should be used with caution.
 - Normally you should not need to implement custom rules, because you will add constraints that are not specified within the specification. Think first if you may be better on with a regex experssion, a min/max or any other swagger constraint.
 
-## Polymorphism
+# Polymorphism
 Swagger-Object-Validator can work with two types of polymorphism.
 
-### Standard polymorphism
+## Standard polymorphism
 Medium is a superclass of Image and Video. The discriminator _type_ can either be "Image" or "Video".
 This is the way swagger intended polymorphism.
 ```yaml
@@ -316,7 +369,7 @@ validator.validateModel(medium, 'Medium', (err, result) => {
 });
 ```
 
-### Enum polymorphism
+## Enum polymorphism
 Instead of using the Name of the object, enum polymorphism uses enums to differentiate:
 
 ```yaml
@@ -362,8 +415,37 @@ let section = {
 };
 ```
 
+## Polymorphism within the stack trace
+The stack trace will tell you if polymorphism was detected.
+So if a Medium may be an Image, and Polymorphism was detected, a trace may look like this:
 
-## Development
+```json
+{
+    "errors": [
+        {
+            "errorType": 0,
+            "trace": [
+                {
+                    "stepName": "Medium",
+                    "concreteModel": "Image" // here
+                },
+                {
+                    "stepName": "source"
+                }
+            ]
+        }
+    ]
+}
+```
+
+HumanReadable:
+```
+Missing required property:
+	 - At Medium<Image>/source
+```
+
+
+# Development
 Wanna help? Sure. Please make sure to use an IDE with TSLint and EditorConfig installed. Always work test-driven, for each feature or bug you fix there needs to be a test.
 
 ```bash
