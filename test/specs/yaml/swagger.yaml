@@ -1,0 +1,93 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Some definitions to test a swagger model validator
+  license:
+    name: MIT
+definitions:
+  Pet:
+    $ref: './definitions/pet.yml'
+
+  Pets:
+    type: array
+    items:
+      $ref: '#/definitions/Pet'
+
+  Dictionary:
+    additionalProperties:
+      type: string
+
+  DictionaryOfPets:
+    additionalProperties:
+      $ref: '#/definitions/Pet'
+
+  Medium:
+    $ref: './definitions/medium.yml'
+
+  Mediums:
+    type: array
+    items:
+      $ref: '#/definitions/Medium'
+
+  Image:
+    required:
+      - source
+    allOf:
+      - $ref: '#/definitions/Medium'
+    properties:
+      source:
+        type: string
+
+  Video:
+    required:
+      - length
+    allOf:
+      - $ref: '#/definitions/Medium'
+    properties:
+      length:
+        type: integer
+
+  Section:
+    required:
+      - sectionType
+    discriminator: sectionType
+    properties:
+      title:
+        type: string
+
+      sectionType:
+        type: string
+        enum:
+          - TEXT_SECTION
+          - IMAGE_SECTION
+
+  TextSection:
+    allOf:
+      - $ref: '#/definitions/Section'
+    properties:
+      sectionType:
+        type: string
+        enum:
+          - TEXT_SECTION
+      textContent:
+        type: string
+
+  ImageSection:
+    required:
+      - imageSource
+    allOf:
+      - $ref: '#/definitions/Section'
+    properties:
+      sectionType:
+        type: string
+        enum:
+          - IMAGE_SECTION
+      imageSource:
+        type: string
+
+paths:
+  /:
+    get:
+      responses:
+        "200":
+          description: Paths are not needed

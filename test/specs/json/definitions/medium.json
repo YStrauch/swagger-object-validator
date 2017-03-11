@@ -1,0 +1,17 @@
+{
+  "discriminator": "type",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "type": "string"
+    },
+    "creation": {
+      "type": "integer"
+    },
+    "owner": {
+      "type": "string"
+    }
+  }
+}

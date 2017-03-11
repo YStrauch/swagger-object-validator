@@ -1,0 +1,51 @@
+{
+  "name": "swagger-object-validator",
+  "version": "1.0.0",
+  "description": "Validate your objects against a swagger spec and receive in-depth error traces",
+  "license": "MIT",
+  "repository": "https://github.com/YStrauch/swagger-object-validator",
+  "author": "Yaron Strauch <npm@yaron-strauch.com> (http://yaron-strauch.com)",
+  "keywords": [
+    "swagger",
+    "swagger2",
+    "validation",
+    "validator",
+    "spec",
+    "model",
+    "object",
+    "data"
+  ],
+  "files": [
+    "lib"
+  ],
+  "main": "lib/handler.js",
+  "typings": "lib/handler.d.ts",
+  "scripts": {
+    "clean": "rimraf lib",
+    "lint": "tslint --force --format verbose \"src/**/*.ts\"",
+    "build": "npm run clean && npm run lint && tsc --pretty",
+    "test": "npm run build && mocha --compilers ts:ts-node/register --recursive test/**/*.spec.ts",
+    "debug": "npm run build && mocha --compilers ts:ts-node/register --recursive test/**/*.spec.ts --debug-brk",
+    "watch": "npm run build -- --watch",
+    "watch:test": "npm run test -- --watch"
+  },
+  "dependencies": {
+    "js-yaml": "3.7.0"
+  },
+  "devDependencies": {
+    "@types/chai": "3.4.30",
+    "@types/js-yaml": "3.5.28",
+    "@types/mocha": "2.2.29",
+    "@types/node": "6.0.31",
+    "@types/swagger-schema-official": "2.0.1",
+    "chai": "3.5.0",
+    "mocha": "3.0.1",
+    "rimraf": "2.5.4",
+    "ts-node": "1.2.2",
+    "tslint": "3.15.1",
+    "typescript": "2.1.6"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}

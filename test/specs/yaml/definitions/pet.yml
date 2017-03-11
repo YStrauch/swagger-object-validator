@@ -1,0 +1,50 @@
+required:
+  - id
+  - name
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+    minLength: 3
+    maxLength: 15
+  tag:
+    type: string
+  status:
+    type: string
+    enum:
+      - SLEEPING
+      - EATING
+      - PLAYING
+  numberOfLegs:
+    type: integer
+    enum:
+      - 0
+      - 2
+      - 4
+  weight:
+    type: number
+    format: float
+    maximum: 300
+    minimum: 0
+    exclusiveMinimum: true
+  secondsLived:
+    type: integer
+    format: int32
+  happy:
+    type: boolean
+  birthdate:
+    type: string
+    format: date
+  birth:
+    type: string
+    format: date-time
+  children:
+    type: array
+    items:
+      $ref: '#/definitions/Pet'
+    minItems: 1
+    maxItems: 10
+  email:
+    type: string
+    pattern: '/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/'

@@ -1,0 +1,22 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Some definitions to test a swagger model validator
+  license:
+    name: MIT
+definitions:
+  PetsFromYaml:
+    type: array
+    items:
+      $ref: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/petstore.yaml#/definitions/Pet'
+  PetsFromJSON:
+    type: array
+    items:
+      $ref: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore.json#/definitions/Pet'
+
+paths:
+  /:
+    get:
+      responses:
+        "200":
+          description: Paths are not needed
