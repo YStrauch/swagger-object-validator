@@ -80,62 +80,62 @@ describe('Loader', () => {
     });
   });
 
-  // it('should load a yaml via internet', (done) => {
-  //   let validator = new Handler('https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/petstore.yaml');
-  //   let pet = {
-  //     id: 123,
-  //     name: 'Doge'
-  //   };
-  //   validator.validateModel(pet, 'Pet').then(result => {
-  //     expect(result.errors).to.empty;
-  //     done();
-  //   }).catch(err => done(new Error(err)));
-  // });
+  it('should load a yaml via internet', (done) => {
+    let validator = new Handler('https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/petstore.yaml');
+    let pet = {
+      id: 123,
+      name: 'Doge'
+    };
+    validator.validateModel(pet, 'Pet').then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
 
-  // it('should load a yaml that loads refs via internet in yaml format', (done) => {
-  //   let dir = join(__dirname, 'specs', 'yaml');
-  //   let json = join(dir, 'swagger-with-http.yaml');
-  //   let validator = new Handler(json, {partialsDir: dir});
+  it('should load a yaml that loads refs via internet in yaml format', (done) => {
+    let dir = join(__dirname, 'specs', 'yaml');
+    let json = join(dir, 'swagger-with-http.yaml');
+    let validator = new Handler(json, {partialsDir: dir});
 
-  //   let pets = [
-  //     {
-  //       id: 123,
-  //       name: 'Doge',
-  //       tag: 'Much Doge, such Tag'
-  //     }, {
-  //       id: 456,
-  //       name: 'Snek'
-  //     }
-  //   ];
+    let pets = [
+      {
+        id: 123,
+        name: 'Doge',
+        tag: 'Much Doge, such Tag'
+      }, {
+        id: 456,
+        name: 'Snek'
+      }
+    ];
 
-  //   validator.validateModel(pets, 'PetsFromYaml').then(result => {
-  //     expect(result.errors).to.empty;
-  //     done();
-  //   }).catch(err => done(new Error(err)));
-  // });
+    validator.validateModel(pets, 'PetsFromYaml').then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
 
 
-  // it('should load a yaml that loads refs via internet in json format', (done) => {
-  //   let dir = join(__dirname, 'specs', 'yaml');
-  //   let json = join(dir, 'swagger-with-http.yaml');
-  //   let validator = new Handler(json, {partialsDir: dir});
+  it('should load a yaml that loads refs via internet in json format', (done) => {
+    let dir = join(__dirname, 'specs', 'yaml');
+    let json = join(dir, 'swagger-with-http.yaml');
+    let validator = new Handler(json, {partialsDir: dir});
 
-  //   let pets = [
-  //     {
-  //       id: 123,
-  //       name: 'Doge',
-  //       tag: 'Much Doge, such Tag'
-  //     }, {
-  //       id: 456,
-  //       name: 'Snek'
-  //     }
-  //   ];
+    let pets = [
+      {
+        id: 123,
+        name: 'Doge',
+        tag: 'Much Doge, such Tag'
+      }, {
+        id: 456,
+        name: 'Snek'
+      }
+    ];
 
-  //   validator.validateModel(pets, 'PetsFromJSON').then(result => {
-  //     expect(result.errors).to.empty;
-  //     done();
-  //   }).catch(err => done(new Error(err)));
-  // });
+    validator.validateModel(pets, 'PetsFromJSON').then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
 
 
   it('should disallow a yaml that loads refs via internet in json format when http is disallowed', (done) => {
