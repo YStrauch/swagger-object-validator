@@ -2,7 +2,7 @@ import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
 
 import { getTypeName } from '../helpers/getTypeName';
-import { IValidatorConfig } from '../configuration-interfaces/validator-config.d';
+import { IValidatorConfig } from '../configuration-interfaces/validator-config';
 import { validateEnum } from './EnumValidator';
 import { validateArray } from './ArrayValidator';
 import { validateType } from './GenericValidator';

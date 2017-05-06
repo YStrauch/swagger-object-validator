@@ -2,7 +2,7 @@
 import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
 import { ValidationResult, ITraceStep } from './result';
-import { IValidatorConfig } from './configuration-interfaces/validator-config.d';
+import { IValidatorConfig } from './configuration-interfaces/validator-config';
 export { IValidatorConfig };
 export * from './result';
 export declare class Handler {

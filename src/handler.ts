@@ -7,7 +7,7 @@ import {
   ValidationResult,
   ITraceStep,
  } from './result';
-import { IValidatorConfig } from './configuration-interfaces/validator-config.d';
+import { IValidatorConfig } from './configuration-interfaces/validator-config';
 
 export {
   IValidatorConfig,
