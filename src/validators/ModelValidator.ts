@@ -1,4 +1,6 @@
 import * as Swagger from 'swagger-schema-official';
+import * as Promise from 'bluebird';
+
 import { getTypeName } from '../helpers/getTypeName';
 import { IValidatorConfig } from '../configuration-interfaces/validator-config.d';
 import { validateEnum } from './EnumValidator';
@@ -55,9 +57,9 @@ export function validateModel(test: any, schema: Swagger.Schema, spec: Swagger.S
             break;
           case 'boolean':
             break;
-          case 'integer':
-            validator = validateNumber;
-            break;
+          // case 'integer':
+          //   validator = validateNumber;
+          //   break;
           case 'number':
             validator = validateNumber;
             break;

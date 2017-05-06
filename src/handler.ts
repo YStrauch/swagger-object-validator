@@ -1,4 +1,5 @@
 import * as Swagger from 'swagger-schema-official';
+import * as Promise from 'bluebird';
 
 import { loader, loadSchemaByName } from './helpers/loader';
 import { validateModel } from './validators/ModelValidator';
@@ -12,6 +13,7 @@ export {
   IValidatorConfig,
 }
 export * from './result';
+
 
 export class Handler {
   private config: IValidatorConfig;

@@ -1,4 +1,6 @@
+/// <reference types="bluebird" />
 import * as Swagger from 'swagger-schema-official';
+import * as Promise from 'bluebird';
 import { ValidationResult, ITraceStep } from './result';
 import { IValidatorConfig } from './configuration-interfaces/validator-config.d';
 export { IValidatorConfig };

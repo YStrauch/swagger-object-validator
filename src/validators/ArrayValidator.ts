@@ -1,4 +1,6 @@
 import * as Swagger from 'swagger-schema-official';
+import * as Promise from 'bluebird';
+
 import { IValidatorConfig } from '../configuration-interfaces/validator-config.d';
 import { validateModel } from './ModelValidator';
 import { ITraceStep, IValidationError, ITypeValidationError, IConstraintsError, ValidationErrorType } from '../result';

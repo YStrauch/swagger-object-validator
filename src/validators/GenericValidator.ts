@@ -1,8 +1,10 @@
+import * as Swagger from 'swagger-schema-official';
+import * as Promise from 'bluebird';
+
 import { getTypeName } from '../helpers/getTypeName';
 import { IValidatorConfig } from '../configuration-interfaces/validator-config.d';
 import { ITraceStep, IValidationError, ValidationErrorType } from '../result';
 import { pushError } from '../helpers/pushError';
-import * as Swagger from 'swagger-schema-official';
 
 // checks for simple type mismatches (numbers, strings, objects etc)
 export function validateType(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {

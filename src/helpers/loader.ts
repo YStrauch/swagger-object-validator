@@ -1,4 +1,6 @@
 import * as Swagger from 'swagger-schema-official';
+import * as Promise from 'bluebird';
+
 import { IValidatorConfig } from '../configuration-interfaces/validator-config.d';
 import { existsSync, readFile } from 'fs';
 import { extname, join, resolve, isAbsolute } from 'path';
@@ -15,7 +17,7 @@ export interface ILoadCB {
   (error: any, spec?: Swagger.Spec): void;
 }
 
-export function loader(input: Swagger.Spec | string, config: IValidatorConfig): Promise<Swagger.Spec | Swagger.Schema> {
+export function loader(input: Swagger.Spec | string, config: IValidatorConfig): Promise<Swagger.Spec> {
   if (typeof (input) === 'string') {
     return _loadSwaggerSpecFromString(input, config);
   } else {
@@ -131,7 +133,7 @@ function _loadSwaggerSpecFromString(path: string, config: IValidatorConfig): Pro
   if (extension === '.json') {
     return Promise.resolve(JSON.parse(JSON.stringify(require(path))));
   } else if (extension === '.yaml' || extension === '.yml') {
-    return new Promise((resolve, reject) => {
+    return new Promise<Swagger.Spec>((resolve, reject) => {
       readFile(path, 'utf-8', (err, file) => {
         if (err) {
           return reject('Error loading yaml file');
@@ -178,7 +180,7 @@ function _download(path: string, config: IValidatorConfig): Promise<any> {
 
 
 
-  let loadPromise = new Promise((resolve, reject) => {
+  let loadPromise = new Promise<Swagger.Spec>((resolve, reject) => {
     downloadMethod(path, (response) => _downloadStarted(response, extension, config, resolve, reject))
     .on('error', function (err: any) {
       return reject(err.message);
