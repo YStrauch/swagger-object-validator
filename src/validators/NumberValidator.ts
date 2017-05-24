@@ -34,7 +34,9 @@ export function validateNumber(test: any, schema: Swagger.Schema, spec: Swagger.
     // test is float or double
 
     let isFloat: boolean;
-    if (test > 0) {
+    if (test === 0) {
+      isFloat = true;
+    } else if (test > 0) {
       isFloat = test > 1.5E-45 && test < 3.4E38;
     } else {
       isFloat = test < -1.5E-45 && test > -3.4E38;
