@@ -27,6 +27,20 @@ describe('NumberValidator', () => {
     }).catch(err => done(new Error(err)));
   });
 
+  it('should validate a negative float as a float', (done) => {
+    let pet = {
+      id: 123,
+      name: 'Doge',
+      money: -1234.58
+    };
+
+    validator.validateModel(pet, 'Pet').then(result => {
+      expect(result.errors).to.empty;
+
+      done();
+    }).catch(err => done(new Error(err)));
+  });
+
   it('should validate an int instead of a float', (done) => {
     let pet = {
       id: 123,

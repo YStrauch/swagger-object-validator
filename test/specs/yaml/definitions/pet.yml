@@ -31,6 +31,9 @@ properties:
   secondsLived:
     type: integer
     format: int32
+  money:
+    type: number
+    format: float
   happy:
     type: boolean
   birthdate:
