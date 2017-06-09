@@ -125,13 +125,30 @@ function _loadSwaggerSpecFromString(path: string, config: IValidatorConfig): Pro
     path = resolve(path);
   }
 
+  if (!existsSync) {
+    return Promise.reject('Cannot read file system, seems like you are using this module in frontend');
+  }
+
   if (!existsSync(path)) {
     return Promise.reject(`File ${path} does not exist`);
   }
 
 
   if (extension === '.json') {
-    return Promise.resolve(JSON.parse(JSON.stringify(require(path))));
+    return new Promise<Swagger.Spec>((resolve, reject) => {
+      if (!readFile) {
+        reject('Cannot read file system, seems like you are using this module in frontend');
+      }
+
+      readFile(path, 'utf-8', (err, file) => {
+        if (err) {
+          return reject('Error loading JSON file');
+        } else {
+          return resolve(JSON.parse(file));
+        }
+      });
+    });
+
   } else if (extension === '.yaml' || extension === '.yml') {
     return new Promise<Swagger.Spec>((resolve, reject) => {
       readFile(path, 'utf-8', (err, file) => {
