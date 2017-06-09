@@ -35,9 +35,6 @@ export declare function getTraceString(trace: Array<ITraceStep>): string;
 export declare class ValidationResult {
     errors: Array<IValidationError>;
     constructor(errors: Array<IValidationError>);
-    errorsWithStringTypes(): Array<{
-        errorType: string;
-        trace: Array<ITraceStep>;
-    }>;
+    errorsWithStringTypes(): Array<IValidationError>;
     humanReadable(): String;
 }

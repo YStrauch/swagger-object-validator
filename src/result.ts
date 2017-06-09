@@ -59,12 +59,11 @@ export function getTraceString(trace: Array<ITraceStep>) {
 export class ValidationResult {
   constructor(public errors: Array<IValidationError>) {};
 
-  public errorsWithStringTypes(): Array<{errorType: string, trace: Array<ITraceStep>}> {
+  public errorsWithStringTypes(): Array<IValidationError> {
     return this.errors.map((error) => {
-      return {
-        errorType: ValidationErrorType[error.errorType],
-        trace: error.trace
-      };
+      error = JSON.parse(JSON.stringify(error));
+      error.errorType = <any> ValidationErrorType[error.errorType];
+      return error;
     });
   }
 
