@@ -2,8 +2,13 @@
 Validate an Object against a given [swagger (V2.0)](http://swagger.io/specification/) API definition.
 > A swagger definition specifies an API with requests and data models, and there are a lot of compilers to create server and client skeletons. There are some tools that validate the requests that were sent to the server, but surprisingly there is a huge lack of (good) validators for response bodies.
 
+Just test it quickly and be amazed:
+
+[![Try it on RunKit](https://badge.runkitcdn.com/swagger-object-validator.svg)](https://npm.runkit.com/swagger-object-validator)
+
+
 *Please note:*
-Request validation or the validation of a swagger spec itself is explicitly not intended, only the validation of the objects returned from the server is part of this module. Ensure that your swagger spec is valid to prevent unexpected errors.
+Request validation and the validation of a swagger spec itself is explicitly not intended (there are other modules available), only the validation of the objects returned from the server is part of this module. Ensure that your swagger spec is valid to prevent unexpected errors.
 
 # Why this and not some other tool?
 The API is awesome, it gives you easy and full control over what's happening:

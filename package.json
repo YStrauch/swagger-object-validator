@@ -49,5 +49,6 @@
   },
   "engines": {
     "node": ">=6.0.0"
-  }
+  },
+  "runkitExampleFilename": "example.js"
 }
