@@ -16,7 +16,8 @@
     "data"
   ],
   "files": [
-    "lib"
+    "lib",
+    "example.js"
   ],
   "main": "lib/handler.js",
   "typings": "lib/handler.d.ts",
