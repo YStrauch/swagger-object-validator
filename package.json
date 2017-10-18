@@ -32,15 +32,15 @@
   },
   "dependencies": {
     "bluebird": "^3.5.0",
-    "js-yaml": "3.7.0"
+    "js-yaml": "3.7.0",
+    "@types/swagger-schema-official": "2.0.1",
+    "@types/bluebird": "3.5.3"
   },
   "devDependencies": {
-    "@types/bluebird": "3.5.3",
     "@types/chai": "3.4.30",
     "@types/js-yaml": "3.5.28",
     "@types/mocha": "2.2.29",
     "@types/node": "6.0.31",
-    "@types/swagger-schema-official": "2.0.1",
     "chai": "3.5.0",
     "mocha": "3.0.1",
     "rimraf": "2.5.4",
