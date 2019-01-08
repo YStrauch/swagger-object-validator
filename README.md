@@ -189,6 +189,9 @@ interface IValidatorConfig {
   // allow additional properties not defined in the Spec
   allowAdditionalProperties?: boolean;
 
+  // allow usage of x-nullable for properties, defaults to disallow
+  allowXNullable?: boolean;
+
   // HTTP and HTTPS are allowed by default
   disallowHttp?: boolean;
   disallowHttps?: boolean;
@@ -253,6 +256,20 @@ do that with the ignoreError function (see "Ignoring Errors" below), or you can 
 ```TypeScript
 let config: IValidatorConfig = {
     allowAdditionalProperties: true
+};
+```
+
+## Allowing `x-nullable` properties
+A common extension for Swagger 2 is `x-nullable`, based on
+[`nullable` from the OpenAPI 3 spec](https://swagger.io/specification/#schemaNullable).
+This allows a property to be returned as `null` instead of the intended type.
+
+By enabling this configuration, the `x-nullable` property is recognized and respected
+when validating types.
+
+```TypeScript
+let config: IValidatorConfig = {
+    allowXNullable: true
 };
 ```
 

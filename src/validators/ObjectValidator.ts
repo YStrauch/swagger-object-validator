@@ -18,16 +18,26 @@ interface ISwaggerProperties {
   [propertyName: string]: Swagger.Schema;
 }
 
+export interface ISchemaWithNullable extends Swagger.Schema {
+  'x-nullable'?: boolean;
+}
 
-export function validateObject(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
+export function validateObject(test: any, schema: ISchemaWithNullable, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   if (schema === undefined || spec === undefined) {
     throw new Error('Schema or spec is not defined');
+  }
+
+  if (config.allowXNullable === true && test === null && schema['x-nullable'] === true){
+    return Promise.resolve([]);
   }
 
   if (!test || !(test instanceof Object)) {
     let typeIs: string = typeof (test);
     if (Array.isArray(test)) {
       typeIs = 'array';
+    }
+    if (test === null) {
+      typeIs = 'null';
     }
 
     let typeShouldBe = schema.title ? schema.title : 'object';

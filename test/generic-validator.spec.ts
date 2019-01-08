@@ -11,7 +11,6 @@ let dir = join(__dirname, 'specs', 'yaml');
 let yaml = join(dir, 'swagger.yaml');
 let validator = new Handler(yaml, {partialsDir: dir});
 
-
 describe('GenericValidator', () => {
   it('should invalidate string instead of number', (done) => {
     let pet = {
@@ -87,6 +86,52 @@ describe('GenericValidator', () => {
       expect(error.trace[0].stepName).to.equals('Pet');
       expect(error.trace[1].stepName).to.equals('happy');
       expect(error.typeIs).to.equals('string');
+      expect(error.typeShouldBe).to.equals('boolean');
+
+      done();
+    }).catch(err => done(new Error(err)));
+  });
+
+  it('should validate null with x-nullable', (done) => {
+    let validator = new Handler(yaml, {allowXNullable: true, partialsDir: dir});
+
+    let pet: {
+      id: number,
+      name: string,
+      nullable: string 
+    } = {
+      id: 123,
+      name: 'Doge',
+      nullable: null
+    };
+
+    validator.validateModel(pet, 'Pet').then(result => {
+      expect(result.errors).to.empty;
+
+      done();
+    }).catch(err => done(new Error(err)));
+  });
+
+  it('should invalidate null without x-nullable', (done) => {
+    let pet: {
+      id: number,
+      name: string,
+      happy: string 
+    } = {
+      id: 123,
+      name: 'Doge',
+      happy: null
+    };
+
+    validator.validateModel(pet, 'Pet').then(result => {
+      expect(result.errors).to.lengthOf(1);
+
+      let error: ITypeValidationError = result.errors[0];
+      expect(error.errorType).to.equals(ValidationErrorType.TYPE_MISMATCH);
+      expect(error.trace).to.length(2);
+      expect(error.trace[0].stepName).to.equals('Pet');
+      expect(error.trace[1].stepName).to.equals('happy');
+      expect(error.typeIs).to.equals('null');
       expect(error.typeShouldBe).to.equals('boolean');
 
       done();

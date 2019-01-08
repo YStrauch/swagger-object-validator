@@ -6,8 +6,12 @@ import { IValidatorConfig } from '../configuration-interfaces/validator-config';
 import { ITraceStep, IValidationError, ValidationErrorType } from '../result';
 import { pushError } from '../helpers/pushError';
 
+export interface ISchemaWithNullable extends Swagger.Schema {
+  'x-nullable'?: boolean;
+}
+
 // checks for simple type mismatches (numbers, strings, objects etc)
-export function validateType(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
+export function validateType(test: any, schema: ISchemaWithNullable, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   let errors: Array<IValidationError> = [];
 
   let typeIs = getTypeName(test);
@@ -29,6 +33,10 @@ export function validateType(test: any, schema: Swagger.Schema, spec: Swagger.Sp
   // so replace integer with number
   if (typeShouldBe === 'integer') {
     typeShouldBe = 'number';
+  }
+
+  if (config.allowXNullable === true && typeIs === 'null' && schema['x-nullable'] === true) {
+    typeShouldBe = 'null';
   }
 
   if (typeIs !== typeShouldBe) {
