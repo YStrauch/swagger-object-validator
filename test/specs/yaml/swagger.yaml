@@ -1,4 +1,4 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
   version: 1.0.0
   title: Some definitions to test a swagger model validator
@@ -28,6 +28,17 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Medium'
+
+  Nullable:
+    properties:
+      test:
+        type: string
+    x-nullable: true
+
+  NullableRef:
+    properties:
+      nullableRef:
+        $ref: '#/definitions/Nullable'
 
   Image:
     required:
@@ -89,5 +100,5 @@ paths:
   /:
     get:
       responses:
-        "200":
+        '200':
           description: Paths are not needed

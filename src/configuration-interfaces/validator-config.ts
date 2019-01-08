@@ -6,6 +6,7 @@ import { ITraceStep, IValidationError, ICustomValidationError} from '../result';
 export interface IValidatorConfig {
   partialsDir?: string;
   allowAdditionalProperties?: boolean;
+  allowXNullable?: boolean;
   disallowHttp?: boolean;
   disallowHttps?: boolean;
   customValidation?: (

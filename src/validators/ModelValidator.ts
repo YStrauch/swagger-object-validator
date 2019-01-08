@@ -63,6 +63,8 @@ export function validateModel(test: any, schema: Swagger.Schema, spec: Swagger.S
           case 'number':
             validator = validateNumber;
             break;
+          case 'null':
+            break;
           case 'array':
             validator = validateArray;
             break;
