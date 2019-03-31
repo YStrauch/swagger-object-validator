@@ -98,7 +98,7 @@ function timeNumOffset(test: string) {
 
   // slice away + or - and split at :
   let params = test.substr(1).split(':');
-  if (params.length !== 2) {
+  if (!params || params.length !== 2) {
     return false;
   }
 
@@ -115,7 +115,7 @@ function timeOffset(test: string) {
 
 function partialTime(test: string) {
   let params = test.split(':');
-  if (params.length !== 3) {
+  if (!params || params.length !== 3) {
     return false;
   }
 
@@ -132,7 +132,7 @@ function partialTime(test: string) {
 
 function fullDate(test: string) {
   let params = test.split('-');
-  if (params.length !== 3) {
+  if (!params || params.length !== 3) {
     return false;
   }
 
@@ -144,7 +144,7 @@ function fullTime(test: string) {
   // timeOffset starts with either Z, z, +, or -
 
   let params = splitAtEither(test, ['Z', 'z', '+', '-']);
-  if (params.length !== 2) {
+  if (!params || params.length !== 2) {
     return false;
   }
 
@@ -158,7 +158,7 @@ function dateTime(test: string) {
   } else {
     params = test.split('t');
   }
-  if (params.length !== 2) {
+  if (!params || params.length !== 2) {
     return false;
   }
 

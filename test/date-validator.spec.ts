@@ -100,4 +100,21 @@ describe('DateValidator', () => {
     })
     .catch(err => done(new Error(err)));
   });
+
+  it('should invalidate a corrupt date-time format', (done) => {
+    let pet = {
+      id: 123,
+      name: 'Doge',
+      birth: '1985-04-12T23:20:50.52'
+    };
+
+    validator.validateModel(pet, 'Pet').then(result => {
+      expect(result.errors).to.length(1);
+      let error: ITypeValidationError = result.errors[0];
+      expect(error.errorType).to.equals(ValidationErrorType.DATE_FORMAT);
+
+      done();
+    })
+    .catch(err => done(new Error(err)));
+  });
 });
