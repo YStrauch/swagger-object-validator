@@ -7,7 +7,15 @@ info:
 definitions:
   Pet:
     $ref: './definitions/pet.yml'
-
+  Hamster:
+    allOf:
+      - $ref: '#/definitions/Pet'
+      - required:
+        - hungry
+        type: "object"
+        properties:
+          hungry:
+            type: boolean
   Pets:
     type: array
     items:

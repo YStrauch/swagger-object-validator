@@ -12,10 +12,16 @@ import { validateDate } from './DateValidator';
 import { validateString } from './StringValidator';
 import { ITraceStep, ValidationResult, IValidationError } from '../result';
 import { loadSchema } from '../helpers/loader';
+import { extendAllAllOfs } from '../helpers/allOf';
 
 export function validateModel(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   if (!trace) {
     trace = [];
+  }
+
+  if (schema.allOf && schema.allOf.length) {
+    return extendAllAllOfs(schema, config, spec)
+      .then(schema => validateModel(test, schema, spec, config, trace));
   }
 
   if (schema.$ref) {

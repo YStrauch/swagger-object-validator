@@ -179,4 +179,20 @@ describe('ObjectValidator', () => {
 
   });
 
+  it('should validate allOf inheritance', (done) => {
+    let hamster = {
+      id: 123,
+      name: 'Fred',
+      hungry: true
+    }
+
+    validator.validateModel(hamster, 'Hamster').then(result => {
+      expect(result.errors).to.length(0);
+
+      done();
+    }).catch(err => done(new Error(err)));
+
+
+  });
+
 });
