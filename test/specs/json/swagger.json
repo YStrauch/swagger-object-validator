@@ -125,14 +125,34 @@
         }
     },
     "paths": {
-        "/": {
-            "get": {
-                "responses": {
-                    "200": {
-                        "description": "Paths are not needed"
-                    }
-                }
+      "/person": {
+        "post": {
+          "operationId": "PostPerson",
+          "parameters": [
+            {
+              "name": "Person",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 5
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
             }
+          ],
+          "responses": {
+            "200": {
+              "description": "ok"
+            }
+          }
         }
+      }
     }
 }

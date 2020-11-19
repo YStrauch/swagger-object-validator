@@ -54,10 +54,7 @@ describe('Loader', () => {
   });
 
   it('should validate from inline array schema', (done) => {
-    let dir = join(__dirname, 'specs', 'json');
-    let json = join(dir, 'swagger.json');
-    let validator = new Handler(json, {partialsDir: dir});
-
+    let validator = new Handler();
 
     let schema = {
       type: "array",
@@ -69,6 +66,22 @@ describe('Loader', () => {
     let model = ['1','2'];
 
     validator.validateModel(model, schema).then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
+
+  it('should be able to validate from paths model', (done) => {
+    let dir = join(__dirname, 'specs', 'json');
+    let json = require(join(dir, 'swagger.json'));
+    let validator = new Handler(json, {partialsDir: dir});
+
+
+    let model = {
+      'name': 'Homer'
+    };
+
+    validator.validateModel(model, json.paths['/person'].post.parameters[0].schema).then(result => {
       expect(result.errors).to.empty;
       done();
     }).catch(err => done(new Error(err)));

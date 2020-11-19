@@ -42,7 +42,7 @@ The following swagger specifications are validated:
 # Quick start
 Let's assume you got a pet from your pet store and want to validate it.
 
-**Using TypeScript**
+## Using TypeScript
 
 ```ts
 import * as SwaggerValidator from 'swagger-object-validator';
@@ -58,7 +58,7 @@ validator.validateModel(pet, 'Pet', (err, result) => {
 
 ```
 
-**Using JavaScript**
+## Using JavaScript
 
 ```js
 var swaggerValidator = require('swagger-object-validator');
@@ -73,10 +73,10 @@ validator.validateModel(pet, 'Pet', function (err, result) {
 });
 ```
 
-Both will print out "Valid", since they comply to the swagger specification
+Both will print out "Valid", since they comply to the swagger specification.
 
 ## Error Trace
-So lets change our model to an invalid pet (the rest of the code remains the same):
+So lets change our pet model to be invalid (the rest of the code remains the same):
 ```js
 var pet = {
     id: 'This is not a number',
@@ -166,6 +166,7 @@ The human readable trace is just a rendered version of `result.errors`, which lo
 If you don't like the error types as integers (which will happen if you don't use TypeScript), call `result.errorsWithStringTypes()` and all those errorTypes will be called "MISSING_REQUIRED_PROPERTY", "TYPE_MISMATCH" and "ADDITIONAL_PROPERTY".
 
 # Ways to load a specification
+## JSON/yaml/URL
 You may load JSON or yaml files from your disk or from the interwebs. It doesn't matter!
 ```Typescript
 import * as SwaggerValidator from 'swagger-object-validator';
@@ -177,6 +178,41 @@ let validator = new SwaggerValidator.Handler('./petstore.json');
 // or
 let petStore = require('./petstore.json');
 let validator = new SwaggerValidator.Handler(petStore);
+```
+
+## Without an entire swagger spec
+
+Up to now we always loaded the complete Swagger Specification. Maybe you don't need that and already know the exact model spec? Just validate against a model spec directly:
+
+```ts
+import * as SwaggerValidator from 'swagger-object-validator';
+let validator = new SwaggerValidator.Handler();
+
+let spec = {
+    type: "array",
+    items: {
+        type: "string"
+    }
+}
+
+let model = ['1', '2'];
+validator.validateModel(model, spec, (err, result) => {
+    console.log(result.humanReadable());
+});
+```
+## Inline models
+If you need to validate a model against a definition that is *not* part of the *definitions* section, you can fetch the model specification like so:
+
+```ts
+import * as SwaggerValidator from 'swagger-object-validator';
+let validator = new SwaggerValidator.Handler('https://raw.githubusercontent.com/YStrauch/swagger-object-validator/master/test/specs/yaml/swagger.yaml');
+
+// Fetch the unnamed model from i.e. a path
+let schema = json.paths['/person'].post.parameters[0].schema
+
+validator.validateModel({'name': 'Homer'}, schema).then(result => {
+    console.log(result.humanReadable());
+});
 ```
 
 # Config
@@ -466,6 +502,10 @@ Missing required property:
 	 - At Medium<Image>/source
 ```
 
+# Potentially breaking Changes
+# 1.3.0
+- Fixed typo, changed ValidationErrorType from CONSTRAINTS_VIOATION to CONSTRAINTS_VIOLATION (added missing L)
+- If you call `validateModel()` without a full-fledged spec (i.e. just the model definition), the first error step did previously not have a name. This was changed to the dedicated name 'root'.
 
 # Development
 Wanna help? Sure. Please make sure to use an IDE with TSLint and EditorConfig installed. Always work test-driven, for each feature or bug you fix there needs to be a test.

@@ -8,6 +8,7 @@ import {
   ITraceStep,
  } from './result';
 import { IValidatorConfig } from './configuration-interfaces/validator-config';
+import { assert } from 'console';
 
 export {
   IValidatorConfig,
@@ -20,11 +21,12 @@ export class Handler {
 
   public swaggerSpec: Promise<Swagger.Spec>;
 
-  constructor(swaggerSpec: Swagger.Spec | string, config?: IValidatorConfig) {
+  constructor(swaggerSpec?: Swagger.Spec | string, config?: IValidatorConfig) {
     config = config || {};
     this.config = config;
 
     this.swaggerSpec = loader(swaggerSpec, config);
+
   }
 
 
@@ -52,6 +54,9 @@ export class Handler {
         trace = [];
       }
       if (typeof (schema) === 'string') {
+        if (!spec) {
+          throw new Error('Received a model name(?) but no Swagger Spec!');
+        }
         trace.push({
           stepName: schema
         });

@@ -8,7 +8,7 @@ export * from './result';
 export declare class Handler {
     private config;
     swaggerSpec: Promise<Swagger.Spec>;
-    constructor(swaggerSpec: Swagger.Spec | string, config?: IValidatorConfig);
+    constructor(swaggerSpec?: Swagger.Spec | string, config?: IValidatorConfig);
     validateModel(test: any, schema: string | Swagger.Schema, cb?: (err: string, result?: ValidationResult) => void, trace?: Array<ITraceStep>): Promise<ValidationResult>;
     private startValidation(test, schema, trace?);
 }

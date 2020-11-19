@@ -20,6 +20,8 @@ export interface ILoadCB {
 export function loader(input: Swagger.Spec | string, config: IValidatorConfig): Promise<Swagger.Spec> {
   if (typeof (input) === 'string') {
     return _loadSwaggerSpecFromString(input, config);
+  } else if (!input) {
+    return Promise.resolve(null);
   } else {
     return Promise.resolve(JSON.parse(JSON.stringify(input)));
   }
