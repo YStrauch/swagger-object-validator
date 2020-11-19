@@ -58,6 +58,10 @@ export class Handler {
 
         schemaPromise = loadSchemaByName(schema, spec, this.config);
       } else {
+        trace.push({
+          stepName: 'root'
+        });
+
         schemaPromise = Promise.resolve(schema);
       }
 

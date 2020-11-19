@@ -53,6 +53,27 @@ describe('Loader', () => {
     }).catch(err => done(new Error(err)));
   });
 
+  it('should validate from inline array schema', (done) => {
+    let dir = join(__dirname, 'specs', 'json');
+    let json = join(dir, 'swagger.json');
+    let validator = new Handler(json, {partialsDir: dir});
+
+
+    let schema = {
+      type: "array",
+      items: {
+        type: "string"
+      }
+    }
+
+    let model = ['1','2'];
+
+    validator.validateModel(model, schema).then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
+
   it('should be able to disallow HTTP', (done) => {
     let config = {
       disallowHttp: true
