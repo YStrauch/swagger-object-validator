@@ -4,7 +4,7 @@ export enum ValidationErrorType {
   TYPE_MISMATCH,
   ENUM_MISMATCH,
   DATE_FORMAT,
-  CONSTRAINTS_VIOATION,
+  CONSTRAINTS_VIOLATION,
   CUSTOM
 }
 
@@ -110,7 +110,7 @@ export class ValidationResult {
           ret.push(`\t - At ${getTraceString(error.trace)}`);
           break;
 
-        case ValidationErrorType.CONSTRAINTS_VIOATION:
+        case ValidationErrorType.CONSTRAINTS_VIOLATION:
           let violationError: IConstraintsError = <IConstraintsError> error;
           ret.push(`Constraint violation:`);
           ret.push(`\t - Violation: ${violationError.constraintName}<${violationError.constraintValue}>`);

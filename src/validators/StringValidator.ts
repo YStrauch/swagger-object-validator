@@ -11,7 +11,7 @@ export function validateString(test: string, schema: Swagger.Schema, spec: Swagg
 
   if (schema.minLength && test.length < schema.minLength) {
     pushError(<IConstraintsError> {
-      errorType: ValidationErrorType.CONSTRAINTS_VIOATION,
+      errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
       trace: trace,
       constraintName: 'minLength',
       constraintValue: schema.minLength
@@ -20,7 +20,7 @@ export function validateString(test: string, schema: Swagger.Schema, spec: Swagg
 
   if (schema.maxLength && test.length > schema.maxLength) {
     pushError(<IConstraintsError> {
-      errorType: ValidationErrorType.CONSTRAINTS_VIOATION,
+      errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
       trace: trace,
       constraintName: 'maxLength',
       constraintValue: schema.maxLength
@@ -36,7 +36,7 @@ export function validateString(test: string, schema: Swagger.Schema, spec: Swagg
     }
     if (!(new RegExp(pattern).test(test))) {
       pushError(<IConstraintsError> {
-        errorType: ValidationErrorType.CONSTRAINTS_VIOATION,
+        errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
         trace: trace,
         constraintName: 'pattern',
         constraintValue: schema.pattern

@@ -122,7 +122,7 @@ describe('ArrayValidator', () => {
       expect(result.errors).to.lengthOf(1);
 
       let error: IConstraintsError = <IConstraintsError> result.errors[0];
-      expect(error.errorType).to.equals(ValidationErrorType.CONSTRAINTS_VIOATION);
+      expect(error.errorType).to.equals(ValidationErrorType.CONSTRAINTS_VIOLATION);
       expect(error.trace).to.length(2);
       expect(error.trace[0].stepName).to.equals('Pet');
       expect(error.trace[1].stepName).to.equals('children');
@@ -156,7 +156,7 @@ describe('ArrayValidator', () => {
       expect(result.errors).to.lengthOf(1);
 
       let error: IConstraintsError = <IConstraintsError> result.errors[0];
-      expect(error.errorType).to.equals(ValidationErrorType.CONSTRAINTS_VIOATION);
+      expect(error.errorType).to.equals(ValidationErrorType.CONSTRAINTS_VIOLATION);
       expect(error.trace).to.length(2);
       expect(error.trace[0].stepName).to.equals('Pet');
       expect(error.trace[1].stepName).to.equals('children');
@@ -191,7 +191,7 @@ describe('ArrayValidator', () => {
   //     expect(result.errors).to.lengthOf(1);
 
   //     let error: IConstraintsError = <IConstraintsError> result.errors[0];
-  //     expect(error.errorType).to.equals(ValidationErrorType.CONSTRAINTS_VIOATION);
+  //     expect(error.errorType).to.equals(ValidationErrorType.CONSTRAINTS_VIOLATION);
   //     expect(error.trace).to.length(2);
   //     expect(error.trace[0].stepName).to.equals('Pet');
   //     expect(error.trace[1].stepName).to.equals('children');
