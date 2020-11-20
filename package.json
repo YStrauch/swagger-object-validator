@@ -23,7 +23,7 @@
   "typings": "lib/handler.d.ts",
   "scripts": {
     "clean": "rimraf lib",
-    "lint": "tslint --force --format verbose \"src/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\"",
     "build": "npm run clean && npm run lint && tsc --pretty",
     "test": "npm run build && mocha --require ts-node/register --recursive test/**/*.spec.ts",
     "debug": "npm run build && mocha --require ts-node/register --recursive test/**/*.spec.ts --inspect-brk",
@@ -31,17 +31,21 @@
     "watch:test": "npm run test -- --watch"
   },
   "dependencies": {
-    "bluebird": "3.7.2",
-    "js-yaml": "3.14.0",
+    "@types/bluebird": "3.5.33",
     "@types/swagger-schema-official": "2.0.15",
-    "@types/bluebird": "3.5.33"
+    "bluebird": "3.7.2",
+    "js-yaml": "3.14.0"
   },
   "devDependencies": {
     "@types/chai": "4.2.14",
     "@types/js-yaml": "3.12.5",
     "@types/mocha": "8.0.4",
     "@types/node": "14.14.8",
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
     "chai": "4.2.0",
+    "eslint": "^7.13.0",
+    "eslint-config-prettier": "^6.15.0",
     "mocha": "8.2.1",
     "rimraf": "3.0.2",
     "ts-node": "9.0.0",

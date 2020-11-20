@@ -30,7 +30,7 @@ describe('ArrayValidator', () => {
 
       done();
     })
-    .catch(err => done(new Error(err)));
+      .catch(err => done(new Error(err)));
 
   });
 
@@ -53,7 +53,7 @@ describe('ArrayValidator', () => {
 
       done();
     })
-    .catch(err => done(new Error(err)));
+      .catch(err => done(new Error(err)));
 
   });
 
@@ -61,8 +61,8 @@ describe('ArrayValidator', () => {
   it('should invalidate string instead of number within an array', (done) => {
     let pets = [
       {
-      id: 'Not a number',
-      name: 'Doge'
+        id: 'Not a number',
+        name: 'Doge'
       }
     ];
 
@@ -80,7 +80,7 @@ describe('ArrayValidator', () => {
 
       done();
     })
-    .catch(err => done(new Error(err)));
+      .catch(err => done(new Error(err)));
 
   });
 
@@ -106,7 +106,7 @@ describe('ArrayValidator', () => {
 
       done();
     })
-    .catch(err => done(new Error(err)));
+      .catch(err => done(new Error(err)));
 
   });
 
@@ -131,7 +131,7 @@ describe('ArrayValidator', () => {
 
       done();
     })
-    .catch(err => done(new Error(err)));
+      .catch(err => done(new Error(err)));
 
   });
 
@@ -165,7 +165,7 @@ describe('ArrayValidator', () => {
 
       done();
     })
-    .catch(err => done(new Error(err)));
+      .catch(err => done(new Error(err)));
 
   });
 

@@ -14,141 +14,141 @@ let yaml = join(dir, 'swagger.yaml');
 describe('ObjectValidator', () => {
   it('should allow polymorphic classes to be be an abstract class themselves', (done) => {
     let spec = {
-      "swagger": "2.0",
-      "info": {
-        "version": "1.0.0",
-        "title": "Multi-Polymorphism"
+      'swagger': '2.0',
+      'info': {
+        'version': '1.0.0',
+        'title': 'Multi-Polymorphism'
       },
-      "paths": {
-        "/pets": {
-          "get": {
-            "responses": {
-              "200": {
-                "description": "Poly-Element",
-                "schema": {
-                  "$ref": "#/definitions/Element"
+      'paths': {
+        '/pets': {
+          'get': {
+            'responses': {
+              '200': {
+                'description': 'Poly-Element',
+                'schema': {
+                  '$ref': '#/definitions/Element'
                 }
               }
             }
           }
         }
       },
-      "definitions": {
-        "Element": {
-          "description": "Element Schema.\n",
-          "required": [
-            "id",
-            "elementType"
+      'definitions': {
+        'Element': {
+          'description': 'Element Schema.\n',
+          'required': [
+            'id',
+            'elementType'
           ],
-          "discriminator": "elementType",
-          "properties": {
-            "id": {
-              "type": "integer",
-              "format": "int64"
+          'discriminator': 'elementType',
+          'properties': {
+            'id': {
+              'type': 'integer',
+              'format': 'int64'
             },
-            "elementType": {
-              "type": "string",
-              "description": "Element type name",
-              "enum": [
-                "video",
-                "extension"
+            'elementType': {
+              'type': 'string',
+              'description': 'Element type name',
+              'enum': [
+                'video',
+                'extension'
               ]
             }
           }
         },
-        "Video": {
-          "description": "Video (Element) Schema.\n",
-          "allOf": [
+        'Video': {
+          'description': 'Video (Element) Schema.\n',
+          'allOf': [
             {
-              "$ref": "#/definitions/Element"
+              '$ref': '#/definitions/Element'
             }
           ],
-          "properties": {
-            "elementType": {
-              "type": "string",
-              "enum": [
-                "video"
+          'properties': {
+            'elementType': {
+              'type': 'string',
+              'enum': [
+                'video'
               ]
             },
-            "caption": {
-              "type": "string"
+            'caption': {
+              'type': 'string'
             }
           }
         },
-        "Extension": {
-          "description": "Extension (Element) Schema.\n",
-          "required": [
-            "extensionType"
+        'Extension': {
+          'description': 'Extension (Element) Schema.\n',
+          'required': [
+            'extensionType'
           ],
-          "allOf": [
+          'allOf': [
             {
-              "$ref": "#/definitions/Element"
+              '$ref': '#/definitions/Element'
             }
           ],
-          "discriminator": "extensionType",
-          "properties": {
-            "elementType": {
-              "type": "string",
-              "enum": [
-                "extension"
+          'discriminator': 'extensionType',
+          'properties': {
+            'elementType': {
+              'type': 'string',
+              'enum': [
+                'extension'
               ]
             },
-            "extensionType": {
-              "type": "string",
-              "enum": [
-                "videoExtension",
-                "photoExtension"
+            'extensionType': {
+              'type': 'string',
+              'enum': [
+                'videoExtension',
+                'photoExtension'
               ]
             }
           }
         },
-        "VideoExtension": {
-          "description": "VideoExtension Schema.\n",
-          "allOf": [
+        'VideoExtension': {
+          'description': 'VideoExtension Schema.\n',
+          'allOf': [
             {
-              "$ref": "#/definitions/Extension"
+              '$ref': '#/definitions/Extension'
             }
           ],
-          "properties": {
-            "elementType": {
-              "type": "string",
-              "enum": [
-                "extension"
+          'properties': {
+            'elementType': {
+              'type': 'string',
+              'enum': [
+                'extension'
               ]
             },
-            "extensionType": {
-              "type": "string",
-              "enum": [
-                "videoExtension"
+            'extensionType': {
+              'type': 'string',
+              'enum': [
+                'videoExtension'
               ]
             },
-            "htmlContent": {
-              "type": "string"
+            'htmlContent': {
+              'type': 'string'
             }
           }
         },
-        "PhotoExtension": {
-          "description": "PhotoExtension Schema.\n",
-          "allOf": [
+        'PhotoExtension': {
+          'description': 'PhotoExtension Schema.\n',
+          'allOf': [
             {
-              "$ref": "#/definitions/Extension"
+              '$ref': '#/definitions/Extension'
             }
           ],
-          "properties": {
-            "elementType": {
-              "type": "string",
-              "enum": [
-                "extension"
+          'properties': {
+            'elementType': {
+              'type': 'string',
+              'enum': [
+                'extension'
               ]
             },
-            "extensionType": {
-              "type": "string",
-              "enum": [
-                "photoExtension"
+            'extensionType': {
+              'type': 'string',
+              'enum': [
+                'photoExtension'
               ]
             },
-            "image": {
-              "type": "string"
+            'image': {
+              'type': 'string'
             }
           }
         }
@@ -156,10 +156,10 @@ describe('ObjectValidator', () => {
     };
 
     let element = {
-      "id": 0,
-      "elementType": "extension",
-      "extensionType": "videoExtension",
-      "htmlContent": 123
+      'id': 0,
+      'elementType': 'extension',
+      'extensionType': 'videoExtension',
+      'htmlContent': 123
     };
 
 

@@ -10,11 +10,11 @@ export function validateEnum(test: any, schema: Swagger.Schema, spec: Swagger.Sp
 
   if (schema.enum.indexOf(test) === -1) {
     pushError(<IEnumValidationError> {
-        errorType: ValidationErrorType.ENUM_MISMATCH,
-        trace: trace,
-        enumIs: test,
-        enumShouldBe: schema.enum
-      }, errors, test, schema, spec, config);
+      errorType: ValidationErrorType.ENUM_MISMATCH,
+      trace: trace,
+      enumIs: test,
+      enumShouldBe: schema.enum
+    }, errors, test, schema, spec, config);
   }
 
   return Promise.resolve(errors);

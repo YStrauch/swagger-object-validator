@@ -22,20 +22,20 @@ export function validateArray(test: any, schema: Swagger.Schema, spec: Swagger.S
 
   if (schema.minItems && test.length < schema.minItems) {
     pushError(<IConstraintsError>{
-        errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
-        trace: trace,
-        constraintName: 'minItems',
-        constraintValue: schema.minItems
-      }, errors, test, schema, spec, config);
+      errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
+      trace: trace,
+      constraintName: 'minItems',
+      constraintValue: schema.minItems
+    }, errors, test, schema, spec, config);
   }
 
   if (schema.maxItems && test.length > schema.maxItems) {
     pushError(<IConstraintsError>{
-        errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
-        trace: trace,
-        constraintName: 'maxItems',
-        constraintValue: schema.maxItems
-      }, errors, test, schema, spec, config);
+      errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
+      trace: trace,
+      constraintName: 'maxItems',
+      constraintValue: schema.maxItems
+    }, errors, test, schema, spec, config);
   }
 
   if (schema.uniqueItems) {

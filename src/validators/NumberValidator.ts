@@ -23,11 +23,11 @@ export function validateNumber(test: any, schema: Swagger.Schema, spec: Swagger.
 
     if (!testIsS32 && schema.format === 'int32') {
       pushError(<ITypeValidationError>{
-          errorType: ValidationErrorType.TYPE_MISMATCH,
-          trace: trace,
-          typeShouldBe: 'integer<signed_int32>',
-          typeIs: 'integer<signed_int64>'
-        }, errors, test, schema, spec, config);
+        errorType: ValidationErrorType.TYPE_MISMATCH,
+        trace: trace,
+        typeShouldBe: 'integer<signed_int32>',
+        typeIs: 'integer<signed_int64>'
+      }, errors, test, schema, spec, config);
     }
 
   } else {
@@ -46,20 +46,20 @@ export function validateNumber(test: any, schema: Swagger.Schema, spec: Swagger.
 
     if (schema.type === 'integer') { // should be int, but is float or double
       pushError(<ITypeValidationError>{
-          errorType: ValidationErrorType.TYPE_MISMATCH,
-          trace: trace,
-          typeShouldBe: `integer<${schema.format}>`,
-          typeIs: typeIs
-        }, errors, test, schema, spec, config);
+        errorType: ValidationErrorType.TYPE_MISMATCH,
+        trace: trace,
+        typeShouldBe: `integer<${schema.format}>`,
+        typeIs: typeIs
+      }, errors, test, schema, spec, config);
     }
 
     if (!isFloat && schema.format === 'float') {
       pushError(<ITypeValidationError>{
-          errorType: ValidationErrorType.TYPE_MISMATCH,
-          trace: trace,
-          typeShouldBe: `number<${schema.format}>`,
-          typeIs: typeIs
-        }, errors, test, schema, spec, config);
+        errorType: ValidationErrorType.TYPE_MISMATCH,
+        trace: trace,
+        typeShouldBe: `number<${schema.format}>`,
+        typeIs: typeIs
+      }, errors, test, schema, spec, config);
     }
   }
 
@@ -72,32 +72,32 @@ export function validateNumber(test: any, schema: Swagger.Schema, spec: Swagger.
   if (schema.maximum !== undefined) {
     if (schema.exclusiveMaximum && test >= schema.maximum || !schema.exclusiveMaximum && test > schema.maximum) {
       pushError(<IConstraintsError>{
-          errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
-          trace: trace,
-          constraintName: 'maximum',
-          constraintValue: schema.maximum
-        }, errors, test, schema, spec, config);
+        errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
+        trace: trace,
+        constraintName: 'maximum',
+        constraintValue: schema.maximum
+      }, errors, test, schema, spec, config);
     }
   }
 
   if (schema.minimum !== undefined) {
     if (schema.exclusiveMinimum && test <= schema.minimum || !schema.exclusiveMinimum && test < schema.minimum) {
       pushError(<IConstraintsError>{
-          errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
-          trace: trace,
-          constraintName: 'minimum',
-          constraintValue: schema.minimum
-        }, errors, test, schema, spec, config);
+        errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
+        trace: trace,
+        constraintName: 'minimum',
+        constraintValue: schema.minimum
+      }, errors, test, schema, spec, config);
     }
   }
 
   if (schema.multipleOf && test % schema.multipleOf !== 0) {
-      pushError(<IConstraintsError>{
-          errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
-          trace: trace,
-          constraintName: 'multipleOf',
-          constraintValue: schema.multipleOf
-        }, errors, test, schema, spec, config);
+    pushError(<IConstraintsError>{
+      errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
+      trace: trace,
+      constraintName: 'multipleOf',
+      constraintValue: schema.multipleOf
+    }, errors, test, schema, spec, config);
   }
 
 

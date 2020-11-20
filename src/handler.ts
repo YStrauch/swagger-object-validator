@@ -6,7 +6,7 @@ import { validateModel } from './validators/ModelValidator';
 import {
   ValidationResult,
   ITraceStep,
- } from './result';
+} from './result';
 import { IValidatorConfig } from './configuration-interfaces/validator-config';
 import { assert } from 'console';
 

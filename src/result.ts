@@ -77,14 +77,14 @@ export class ValidationResult {
     this.errors.forEach((error) => {
       switch (error.errorType) {
         case ValidationErrorType.MISSING_REQUIRED_PROPERTY:
-          ret.push(`Missing required property:`);
+          ret.push('Missing required property:');
           ret.push(`\t - At ${getTraceString(error.trace)}`);
           break;
 
         case ValidationErrorType.TYPE_MISMATCH:
           let typeValidationError: ITypeValidationError = error;
 
-          ret.push(`Type mismatch:`);
+          ret.push('Type mismatch:');
           ret.push(`\t - At ${getTraceString(error.trace)}`);
           ret.push(`\t - Should be: "${typeValidationError.typeShouldBe}"`);
           ret.push(`\t - Is: "${typeValidationError.typeIs}"`);
@@ -94,25 +94,25 @@ export class ValidationResult {
         case ValidationErrorType.ENUM_MISMATCH:
           let enumValidationError: IEnumValidationError = error;
 
-          ret.push(`Enum mismatch:`);
+          ret.push('Enum mismatch:');
           ret.push(`\t - At ${getTraceString(error.trace)}`);
           ret.push(`\t - Should be one of: ["${enumValidationError.enumShouldBe.join('", "')}"]`);
           ret.push(`\t - Is: "${enumValidationError.enumIs}"`);
           break;
 
         case ValidationErrorType.ADDITIONAL_PROPERTY:
-          ret.push(`Additional Property:`);
+          ret.push('Additional Property:');
           ret.push(`\t - At ${getTraceString(error.trace)}`);
           break;
 
         case ValidationErrorType.DATE_FORMAT:
-          ret.push(`Date format mismatch:`);
+          ret.push('Date format mismatch:');
           ret.push(`\t - At ${getTraceString(error.trace)}`);
           break;
 
         case ValidationErrorType.CONSTRAINTS_VIOLATION:
           let violationError: IConstraintsError = <IConstraintsError> error;
-          ret.push(`Constraint violation:`);
+          ret.push('Constraint violation:');
           ret.push(`\t - Violation: ${violationError.constraintName}<${violationError.constraintValue}>`);
           ret.push(`\t - At ${getTraceString(error.trace)}`);
           break;
@@ -120,7 +120,7 @@ export class ValidationResult {
         case ValidationErrorType.CUSTOM:
           let customValidationError: ICustomValidationError = error;
 
-          ret.push(`Custom Error:`);
+          ret.push('Custom Error:');
           ret.push(`\t - At ${getTraceString(customValidationError.trace)}`);
           if (customValidationError.content) {
             ret.push(`\t - Content: ${JSON.stringify(customValidationError.content)}`);
@@ -128,7 +128,7 @@ export class ValidationResult {
           break;
 
         default:
-          ret.push(`Unknown Error:`);
+          ret.push('Unknown Error:');
           ret.push(`\t - At ${getTraceString(error.trace)}`);
           break;
       }

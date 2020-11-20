@@ -30,7 +30,7 @@ export function extendAllAllOfs(schema: IResolvedSchema, config: IValidatorConfi
       // extend parent object recursively
       parentPromise
         .then(
-        parentObject => extendAllAllOfs(parentObject, config, spec)
+          parentObject => extendAllAllOfs(parentObject, config, spec)
         )
         .then(parentObject => {
           // extend all properties from parent object
@@ -38,7 +38,7 @@ export function extendAllAllOfs(schema: IResolvedSchema, config: IValidatorConfi
         });
       parentPromises.push(parentPromise);
     }
-  );
+    );
 
   return Promise.all(parentPromises)
     .then(parents => {
