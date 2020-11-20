@@ -21,14 +21,17 @@ export function validateModel(test: any, schema: Swagger.Schema, spec: Swagger.S
 
   if (schema.allOf && schema.allOf.length) {
     return extendAllAllOfs(schema, config, spec)
-      .then(schema => validateModel(test, schema, spec, config, trace));
+      .then(schema => validateResolvedModel(test, schema, spec, config, trace));
   }
 
+  return validateResolvedModel(test, schema, spec, config, trace);
+}
+
+function validateResolvedModel(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   if (schema.$ref) {
     return loadSchema(schema, spec, config)
-      .then((schema) => validateModel(test, schema, spec, config, trace));
+      .then((schema) => validateResolvedModel(test, schema, spec, config, trace));
   }
-
 
   let errors: Array<IValidationError> = [];
 

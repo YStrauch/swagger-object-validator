@@ -11,11 +11,17 @@ import { ITraceStep,
   getTraceString
  } from '../result';
 import { pushError } from '../helpers/pushError';
-import { loadSchema, loadSchemaByName } from '../helpers/loader';
+import { loadSchema } from '../helpers/loader';
 import { extendAllAllOfs } from '../helpers/allOf';
+import { load } from 'js-yaml';
 
 interface ISwaggerProperties {
   [propertyName: string]: Swagger.Schema;
+}
+
+interface INamedSchema {
+  name: string;
+  schema: Swagger.Schema;
 }
 
 export interface ISchemaWithNullable extends Swagger.Schema {
@@ -56,7 +62,8 @@ export function validateObject(test: any, schema: ISchemaWithNullable, spec: Swa
   let errors: Array<IValidationError> = [];
 
   // polymorphism: Find concrete object
-  let concreteClass = schema.discriminator ? findConcreteObject(schema, trace, test, config, spec) : extendAllAllOfs(schema, config, spec);
+  const poly = schema.discriminator && schema.properties[schema.discriminator];
+  let concreteClass = poly ? findPolymorphicConcreteClass(schema, trace, test, config, spec) : extendAllAllOfs(schema, config, spec);
 
   return concreteClass
     // allOf inheritance: inherit both required and optional fields
@@ -152,68 +159,133 @@ function isDerived(possibleChild: Swagger.Schema, parent: Swagger.Schema, config
   ).length !== 0);
 }
 
-// finds all classes that inherit from this one
-function findConcreteObject(abstractClass: Swagger.Schema, trace: Array<ITraceStep>, test: any, config: IValidatorConfig, spec: Swagger.Spec): Promise<Swagger.Schema> {
-  let derivedObjects: Array<Promise<{ schema: Swagger.Schema, schemaName: string } | undefined>> = [];
+// finds all derived objects to an abstract parent class, either directly or through multiple derivations
+function findDerivedObjects(abstractClass: Swagger.Schema, config: IValidatorConfig, spec: Swagger.Spec): Promise<INamedSchema[]> {
+    const discriminatingFeature = abstractClass.discriminator;
 
-  let stopLoop = false;
-
-  for (let possibleDerivedClassName in spec.definitions) {
-    if (spec.definitions.hasOwnProperty(possibleDerivedClassName)) {
-      if (stopLoop) {
-        break;
-      }
-
-      derivedObjects.push(
-        loadSchemaByName(possibleDerivedClassName, spec, config)
-          .then(schema => extendAllAllOfs(schema, config, spec))
-          .then(possibleDerivedClass => {
-            return isDerived(possibleDerivedClass, abstractClass, config, spec)
-              .then(derived => {
-                if (derived) {
-                  stopLoop = true;
-
-                  return {
-                    schema: possibleDerivedClass,
-                    schemaName: possibleDerivedClassName
-                  };
-                }
-                return undefined;
-              });
+    return Promise.resolve(Object.getOwnPropertyNames(spec.definitions))
+      .map((name: string) => {
+        return <INamedSchema> {
+          name: name,
+          schema: spec.definitions[name]
+        };
+      })
+      .map((namedSchema: INamedSchema) => {
+        return extendAllAllOfs(namedSchema.schema, config, spec)
+          .then(schema => {
+            return <INamedSchema> {
+              name: namedSchema.name,
+              schema: schema
+            };
           })
-      );
-    }
-  }
+      })
+      .filter((namedSchema: INamedSchema) => {
+        const schema = namedSchema.schema;
+        const name = namedSchema.name;
+        if (!schema.allOf || !schema.properties[discriminatingFeature]) {
+          return false;
+        }
+        // Two ways of polymorphism, either using enums or the swagger way
+        const enumPoly = schema.properties[discriminatingFeature].enum;
+        if (enumPoly) {
+          return schema.properties[discriminatingFeature].enum.filter(e => abstractClass.properties[discriminatingFeature].enum.indexOf(''+e) !== -1).length > 0;
+        }
 
-  return Promise.all(derivedObjects)
-    .then(derivedObjects => derivedObjects.filter(derivedObject => derivedObject !== undefined))
+        // Swagger polymorphism cannot be decided here as we are not looking into the actual data, just into the spec
+        return true;
+      })
+      .filter((namedSchema: INamedSchema) => {
+        // Lastly, ensure that we are actually an allOf of the abstract class!
+        return Promise.resolve(namedSchema.schema.allOf)
+          .map(ref => loadSchema(ref, spec, config))
+          .filter((parent: Swagger.Schema) => {
+            // Better not use parent === abstractClass or you can't validate a model with a dedicated spec with different object references
+            return JSON.stringify(parent) === JSON.stringify(abstractClass);
+          })
+          .then(parents => parents.length > 0)
+      })
+      // .map((namedSchema: INamedSchema) => {
+      //   if (namedSchema.schema.discriminator) {
+      //     // Multi-Polymorphism. The child class itself is another parent class with discriminator
+      //     return findDerivedObjects(namedSchema.schema, config, spec)
+      //       .then(others => {
+      //         others.push(namedSchema);
+      //         return others;
+      //       })
+      //     } else {
+      //       return [namedSchema];
+      //     }
+      // })
+      // // flatten
+      // .reduce(function(prev, cur){
+      //   return prev.concat(cur);
+      // }, []);
+
+  // // let derivedObjects: Array<Promise<{ schema: Swagger.Schema, schemaName: string }> | undefined> = [];
+  // let derivedObjects: Promise<Array<{ schema: Swagger.Schema, schemaName: string }>>;
+
+  // let stopLoop = false;
+
+  // for (let possibleDerivedClassName in spec.definitions) {
+  //   if (stopLoop) {
+  //     break;
+  //   }
+
+  //   derivedObjects = loadSchemaByName(possibleDerivedClassName, spec, config)
+  //       .then(schema => extendAllAllOfs(schema, config, spec))
+  //       .then((possibleDerivedClass: Swagger.Schema) => {
+  //         return isDerived(possibleDerivedClass, abstractClass, config, spec)
+  //           .then(derived => {
+  //             if (!derived) {
+  //               return [];
+  //             }
+
+  //             let found = [{
+  //               schema: possibleDerivedClass,
+  //               schemaName: possibleDerivedClassName
+  //             }];
+
+  //             if (possibleDerivedClass.discriminator) {
+  //               // Multi-Polymorphism. The child class itself is another parent class with discriminator
+  //               return findDerivedObjects(possibleDerivedClass, config, spec)
+  //                 .then(grandChildren => {
+  //                   found.push(...grandChildren);
+  //                   return found;
+  //                 })
+  //             }
+
+  //             //   stopLoop = true;
+  //             return found;
+
+  //       });
+  //     });
+  // }
+
+  // return derivedObjects;
+}
+
+// finds the concrete class to the model test respecting polymorphism
+function findPolymorphicConcreteClass(abstractClass: Swagger.Schema, trace: Array<ITraceStep>, test: any, config: IValidatorConfig, spec: Swagger.Spec): Promise<Swagger.Schema> {
+  let derivedObjects = findDerivedObjects(abstractClass, config, spec);
+
+  return derivedObjects
     .then(derivedObjects => {
       if (derivedObjects.length === 0) {
-        return Promise.reject(`Confusing discriminator - Schema uses discriminator but there are no other Schemas extending it via allOf. Trace: ${getTraceString(trace)}`);
+        return Promise.reject(`Confusing discriminator - Schema uses discriminator but there are no other Schemas extending it via allOf and using this discriminator property. Trace: ${getTraceString(trace)}`);
+      }
+      return derivedObjects;
+    })
+    .filter((derivedObject: INamedSchema) => {
+      // Enum-Polymorphism
+      if (derivedObject.schema.properties[abstractClass.discriminator].enum
+        && derivedObject.schema.properties[abstractClass.discriminator].enum.length === 1
+        && derivedObject.schema.properties[abstractClass.discriminator].enum[0] === test[abstractClass.discriminator]
+      ){
+        return true;
       }
 
-      return derivedObjects.filter(derivedObject => {
-        // we found a derived object. now we have to check whether the discriminator name matches (-> the swagger way)
-        let validPolymorhpism = test[abstractClass.discriminator] === derivedObject.schemaName;
-
-        // or, following an enum polymorphism, where enums are used
-        // check, if parent object uses enum, and if child object correctly chose on of the parent object enums
-        if (!validPolymorhpism && abstractClass.properties[abstractClass.discriminator].enum && abstractClass.properties[abstractClass.discriminator].enum.indexOf(test[abstractClass.discriminator]) !== -1) {
-          if (derivedObject.schema.properties[abstractClass.discriminator].enum
-            && derivedObject.schema.properties[abstractClass.discriminator].enum.length === 1
-            && derivedObject.schema.properties[abstractClass.discriminator].enum[0] === test[abstractClass.discriminator]
-          ){
-            validPolymorhpism = true;
-          }
-        }
-
-        if (validPolymorhpism) {
-          // manipulate the trace: set the concrete name within brackets, so it will look like Medium<Image>
-          trace[trace.length - 1].concreteModel = derivedObject.schemaName;
-        }
-
-        return validPolymorhpism;
-      });
+      // Swagger-Like Polymorphism: the model's discriminator must actually match the name of the parent class
+      return test[abstractClass.discriminator] === derivedObject.name;
     })
     .then(derivedObjects => {
       if (derivedObjects.length === 0) {
@@ -222,6 +294,51 @@ function findConcreteObject(abstractClass: Swagger.Schema, trace: Array<ITraceSt
       if (derivedObjects.length > 1) {
         return Promise.reject(`Polymorphism Error: More than one concrete object found. Trace: ${getTraceString(trace)}`);
       }
-      return Promise.resolve(derivedObjects[0].schema);
+
+      const derivedObject = derivedObjects[0];
+      trace[trace.length - 1].concreteModel = derivedObject.name;
+
+      if (derivedObject.schema.discriminator) {
+        // Multi-Polymorphism. Because why not.
+        trace.push({
+          stepName: derivedObject.name
+        });
+
+        return findPolymorphicConcreteClass(derivedObject.schema, trace, test, config, spec);
+      }
+
+      return derivedObject.schema;
     });
+
+    //   return derivedObjects.filter(derivedObject => {
+    //     // we found a derived object. now we have to check whether the discriminator name matches (-> the swagger way)
+
+    //     // or, following an enum polymorphism, where enums are used
+    //     // check, if parent object uses enum, and if child object correctly chose on of the parent object enums
+    //     if (!validPolymorhpism && abstractClass.properties[abstractClass.discriminator].enum && abstractClass.properties[abstractClass.discriminator].enum.indexOf(test[abstractClass.discriminator]) !== -1) {
+    //       if (derivedObject.schema.properties[abstractClass.discriminator].enum
+    //         && derivedObject.schema.properties[abstractClass.discriminator].enum.length === 1
+    //         && derivedObject.schema.properties[abstractClass.discriminator].enum[0] === test[abstractClass.discriminator]
+    //       ){
+    //         validPolymorhpism = true;
+    //       }
+    //     }
+
+    //     if (validPolymorhpism) {
+    //       // manipulate the trace: set the concrete name within brackets, so it will look like Medium<Image>
+    //       trace[trace.length - 1].concreteModel = derivedObject.schemaName;
+    //     }
+
+    //     return validPolymorhpism;
+    //   });
+    // })
+    // .then(derivedObjects => {
+    //   if (derivedObjects.length === 0) {
+    //     return Promise.reject(`Polymorphism Error: No concrete object found. Trace: ${getTraceString(trace)}`);
+    //   }
+    //   if (derivedObjects.length > 1) {
+    //     return Promise.reject(`Polymorphism Error: More than one concrete object found. Trace: ${getTraceString(trace)}`);
+    //   }
+    //   return Promise.resolve(derivedObjects[0].schema);
+    // });
 }

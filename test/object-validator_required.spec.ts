@@ -12,7 +12,7 @@ let yaml = join(dir, 'swagger.yaml');
 let validator = new Handler(yaml, {partialsDir: dir});
 
 
-describe('ModelValidator', () => {
+describe('ObjectValidator', () => {
   it('should invalidate one missing required property', (done) => {
     let pet = {
       id: 12
