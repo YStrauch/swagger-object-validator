@@ -104,7 +104,6 @@ export function validateObject(test: any, schema: ISchemaWithNullable, spec: Swa
               stepName: propertyName
             });
 
-
             if (!currentPropertySchema) {
               // additional property
               if (config.allowAdditionalProperties === true) {

@@ -115,7 +115,7 @@ describe('ArrayValidator', () => {
     let pet = {
       id: 123,
       name: 'Doge',
-      children: <[any]>[] // minItems is 1
+      children: <any[]>[] // minItems is 1
     };
 
     validator.validateModel(pet, 'Pet',).then(result => {

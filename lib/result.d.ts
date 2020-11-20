@@ -5,7 +5,7 @@ export declare enum ValidationErrorType {
     ENUM_MISMATCH = 3,
     DATE_FORMAT = 4,
     CONSTRAINTS_VIOLATION = 5,
-    CUSTOM = 6,
+    CUSTOM = 6
 }
 export interface IValidationError {
     errorType: ValidationErrorType;

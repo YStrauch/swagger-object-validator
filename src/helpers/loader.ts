@@ -152,12 +152,12 @@ function _loadSwaggerSpecFromString(path: string, config: IValidatorConfig): Pro
     });
 
   } else if (extension === '.yaml' || extension === '.yml') {
-    return new Promise<Swagger.Spec>((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       readFile(path, 'utf-8', (err, file) => {
         if (err) {
           return reject('Error loading yaml file');
         } else {
-          return resolve(safeLoad(file));
+          return resolve(<Swagger.Spec> safeLoad(file));
         }
       });
     });

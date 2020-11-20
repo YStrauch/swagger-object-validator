@@ -50,9 +50,19 @@ export function validateArray(test: any, schema: Swagger.Schema, spec: Swagger.S
       let newTrace: Array<ITraceStep> = JSON.parse(JSON.stringify(trace));
       newTrace[newTrace.length - 1].arrayPos = index;
 
-      promises.push(
-        validateModel(entry, schema.items, spec, config, newTrace)
-      );
+      let items: Swagger.Schema[] = [];
+
+      if (Array.isArray(schema.items)) {
+        items = schema.items;
+      } else {
+        items = [schema.items];
+      }
+
+      items.forEach(item => {
+        promises.push(
+          validateModel(entry, item, spec, config, newTrace)
+        );
+      });
     }
   );
 
