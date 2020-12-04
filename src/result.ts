@@ -26,7 +26,7 @@ export interface IEnumValidationError extends IValidationError {
 }
 
 export interface IConstraintsError extends IValidationError {
-  constraintName: string;
+  constraintName: 'minItems' | 'maxItems' | 'uniqueItems' | 'maximum' | 'minimum' | 'multipleOf' | 'minLength' | 'maxLength' | 'pattern';
   constraintValue: number | string | boolean;
 }
 

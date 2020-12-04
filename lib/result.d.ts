@@ -20,7 +20,7 @@ export interface IEnumValidationError extends IValidationError {
     enumShouldBe?: Array<string>;
 }
 export interface IConstraintsError extends IValidationError {
-    constraintName: string;
+    constraintName: 'minItems' | 'maxItems' | 'uniqueItems' | 'maximum' | 'minimum' | 'multipleOf' | 'minLength' | 'maxLength' | 'pattern';
     constraintValue: number | string | boolean;
 }
 export interface ICustomValidationError extends IValidationError {
