@@ -113,7 +113,7 @@ The human readable trace is just a rendered version of `result.errors`, which lo
 ```json
 [
     {
-        "errorType": 0,
+        "errorType": "MISSING_REQUIRED_PROPERTY",
         "trace": [
             {
                 "stepName": "Pet"
@@ -124,20 +124,7 @@ The human readable trace is just a rendered version of `result.errors`, which lo
         ]
     },
     {
-        "trace": [
-            {
-                "stepName": "Pet"
-            },
-            {
-                "stepName": "id"
-            }
-        ],
-        "errorType": 2,
-        "typeIs": "string",
-        "typeShouldBe": "number"
-    },
-    {
-        "errorType": 1,
+        "errorType": "ADDITIONAL_PROPERTY",
         "trace": [
             {
                 "stepName": "Pet"
@@ -153,10 +140,23 @@ The human readable trace is just a rendered version of `result.errors`, which lo
                 "stepName": "Pet"
             },
             {
+                "stepName": "id"
+            }
+        ],
+        "errorType": "TYPE_MISMATCH",
+        "typeIs": "string",
+        "typeShouldBe": "number"
+    },
+    {
+        "trace": [
+            {
+                "stepName": "Pet"
+            },
+            {
                 "stepName": "tag"
             }
         ],
-        "errorType": 2,
+        "errorType": "TYPE_MISMATCH",
         "typeIs": "array",
         "typeShouldBe": "string"
     }
@@ -506,7 +506,7 @@ So if a Medium may be an Image, and Polymorphism was detected, a trace may look 
 {
     "errors": [
         {
-            "errorType": 0,
+            "errorType": "MISSING_REQUIRED_PROPERTY",
             "trace": [
                 {
                     "stepName": "Medium",
@@ -529,11 +529,12 @@ Missing required property:
 
 # Potentially breaking Changes
 ## 1.3.0
-- Fixed typo, changed ValidationErrorType from CONSTRAINTS_VIOATION to CONSTRAINTS_VIOLATION (added missing L)
+- Fixed typo, changed `ValidationErrorType` from 'CONSTRAINTS_VIOATION' to 'CONSTRAINTS_VIOLATION' (added missing L)
 - If you call `validateModel()` without a full-fledged spec (i.e. just the model definition), the first error step did previously not have a name. This was changed to the dedicated name 'root'.
 
 ## 1.4.0
-Added support for `uniqueItems`. Please also read about the default cap of 100 items [here](#Limiting-the-Unique-Items-Constraint).
+- The `ValidationErrorType` in `result.model` was changed from a numeric enum to a more verbose string enum. This will mainly affect JavaScript applications and their logic to handle specific validation errors. TypeScript applications should be unaffected if the enums were used as documented. The values changed from integers between 0 and 6 to 'MISSING_REQUIRED_PROPERTY', 'ADDITIONAL_PROPERTY', 'TYPE_MISMATCH', 'ENUM_MISMATCH', 'DATE_FORMAT', 'CONSTRAINTS_VIOLATION', and 'CUSTOM'.
+- Added support for `uniqueItems`. Please also read about the default cap of 100 items [here](#Limiting-the-Unique-Items-Constraint).
 
 # Development
 Wanna help? Sure. Please make sure to use an IDE with TSLint and EditorConfig installed. Always work test-driven, for each feature or bug you fix there needs to be a test.

@@ -1,13 +1,24 @@
 export enum ValidationErrorType {
-  MISSING_REQUIRED_PROPERTY,
-  ADDITIONAL_PROPERTY,
-  TYPE_MISMATCH,
-  ENUM_MISMATCH,
-  DATE_FORMAT,
-  CONSTRAINTS_VIOLATION,
-  CUSTOM
+  MISSING_REQUIRED_PROPERTY = 'MISSING_REQUIRED_PROPERTY',
+  ADDITIONAL_PROPERTY = 'ADDITIONAL_PROPERTY',
+  TYPE_MISMATCH = 'TYPE_MISMATCH',
+  ENUM_MISMATCH = 'ENUM_MISMATCH',
+  DATE_FORMAT = 'DATE_FORMAT',
+  CONSTRAINTS_VIOLATION = 'CONSTRAINTS_VIOLATION',
+  CUSTOM = 'CUSTOM'
 }
 
+export enum ConstraintName {
+  minItems = 'minItems',
+  maxItems = 'maxItems',
+  uniqueItems = 'uniqueItems',
+  maximum = 'maximum',
+  minimum = 'minimum',
+  multipleOf = 'multipleOf',
+  minLength = 'minLength',
+  maxLength = 'maxLength',
+  pattern = 'pattern',
+}
 
 export interface IValidationError {
   errorType: ValidationErrorType;
@@ -26,7 +37,7 @@ export interface IEnumValidationError extends IValidationError {
 }
 
 export interface IConstraintsError extends IValidationError {
-  constraintName: 'minItems' | 'maxItems' | 'uniqueItems' | 'maximum' | 'minimum' | 'multipleOf' | 'minLength' | 'maxLength' | 'pattern';
+  constraintName: ConstraintName;
   constraintValue: number | string | boolean;
 }
 

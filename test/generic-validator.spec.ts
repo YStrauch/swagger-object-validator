@@ -2,7 +2,6 @@ import { Handler } from '../src/handler';
 import { ITypeValidationError, ValidationErrorType } from '../src/result';
 
 import * as chai from 'chai';
-import * as mocha from 'mocha';
 const expect = chai.expect;
 
 import { join } from 'path';
@@ -98,7 +97,7 @@ describe('GenericValidator', () => {
     let pet: {
       id: number,
       name: string,
-      nullable: string 
+      nullable: string
     } = {
       id: 123,
       name: 'Doge',
@@ -116,7 +115,7 @@ describe('GenericValidator', () => {
     let pet: {
       id: number,
       name: string,
-      happy: string 
+      happy: string
     } = {
       id: 123,
       name: 'Doge',
