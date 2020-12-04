@@ -163,8 +163,6 @@ The human readable trace is just a rendered version of `result.errors`, which lo
 ]
 ```
 
-If you don't like the error types as integers (which will happen if you don't use TypeScript), call `result.errorsWithStringTypes()` and all those errorTypes will be called "MISSING_REQUIRED_PROPERTY", "TYPE_MISMATCH" and "ADDITIONAL_PROPERTY".
-
 # Ways to load a specification
 ## JSON/yaml/URL
 You may load JSON or yaml files from your disk or from the interwebs. It doesn't matter!
@@ -533,7 +531,7 @@ Missing required property:
 - If you call `validateModel()` without a full-fledged spec (i.e. just the model definition), the first error step did previously not have a name. This was changed to the dedicated name 'root'.
 
 ## 1.4.0
-- The `ValidationErrorType` in `result.model` was changed from a numeric enum to a more verbose string enum. This will mainly affect JavaScript applications and their logic to handle specific validation errors. TypeScript applications should be unaffected if the enums were used as documented. The values changed from integers between 0 and 6 to 'MISSING_REQUIRED_PROPERTY', 'ADDITIONAL_PROPERTY', 'TYPE_MISMATCH', 'ENUM_MISMATCH', 'DATE_FORMAT', 'CONSTRAINTS_VIOLATION', and 'CUSTOM'.
+- The `ValidationErrorType` in `result.model` was changed from a numeric enum to a more verbose string enum. This will mainly affect JavaScript applications and their logic to handle specific validation errors. TypeScript applications should be unaffected if the enums were used as documented. The values changed from integers between 0 and 6 to 'MISSING_REQUIRED_PROPERTY', 'ADDITIONAL_PROPERTY', 'TYPE_MISMATCH', 'ENUM_MISMATCH', 'DATE_FORMAT', 'CONSTRAINTS_VIOLATION', and 'CUSTOM'. This deprecated `errorsWithStringTypes`.
 - Added support for `uniqueItems`. Please also read about the default cap of 100 items [here](#Limiting-the-Unique-Items-Constraint).
 
 # Development

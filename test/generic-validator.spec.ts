@@ -8,7 +8,7 @@ import { join } from 'path';
 
 let dir = join(__dirname, 'specs', 'yaml');
 let yaml = join(dir, 'swagger.yaml');
-let validator = new Handler(yaml, {partialsDir: dir});
+let validator = new Handler(yaml, { partialsDir: dir });
 
 describe('GenericValidator', () => {
   it('should invalidate string instead of number', (done) => {
@@ -30,6 +30,28 @@ describe('GenericValidator', () => {
 
       done();
     }).catch(err => done(new Error(err)));
+
+
+  });
+
+  it('should invalidate string instead of number', (done) => {
+    let spec = {
+      type: 'array',
+      uniqueItems: true,
+      items: {
+        type: 'string',
+        enum: ['1', '2', '3', '4']
+      }
+    }
+
+    let model = ['1', '2', '1']; // Should not be valid
+    validator.validateModel(model, spec, (err, result) => {
+      expect(result.errors).to.lengthOf(1);
+
+      console.log(result.humanReadable());
+
+      done();
+    });
 
 
   });
@@ -92,7 +114,7 @@ describe('GenericValidator', () => {
   });
 
   it('should validate null with x-nullable', (done) => {
-    let validator = new Handler(yaml, {allowXNullable: true, partialsDir: dir});
+    let validator = new Handler(yaml, { allowXNullable: true, partialsDir: dir });
 
     let pet: {
       id: number,
