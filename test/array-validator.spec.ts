@@ -168,40 +168,4 @@ describe('ArrayValidator', () => {
       .catch(err => done(new Error(err)));
 
   });
-
-
-  // Unique check not yet implemented
-  // it('should invalidate non-unique pet children', (done) => {
-  //   let pet = {
-  //     id: 123,
-  //     name: 'Doge',
-  //     children: [
-  //       {
-  //         id: 123,
-  //         name: 'Doggo Junior'
-  //       },
-  //       {
-  //         id: 123,
-  //         name: 'Doggo Junior'
-  //       }
-  //     ]
-  //   };
-
-  //   validator.validateModel(pet, 'Pet',).then(result => {
-  //     expect(result.errors).to.lengthOf(1);
-
-  //     let error: IConstraintsError = <IConstraintsError> result.errors[0];
-  //     expect(error.errorType).to.equals(ValidationErrorType.CONSTRAINTS_VIOLATION);
-  //     expect(error.trace).to.length(2);
-  //     expect(error.trace[0].stepName).to.equals('Pet');
-  //     expect(error.trace[1].stepName).to.equals('children');
-  //     expect(error.constraintName).to.equals('uniqueItems
-  //     expect(error.constraintValue).to.e);ms
-  //     done();
-  //   })
-  //   .catch(err => done(new Error(err)));
-
-  // });
-
-
 });

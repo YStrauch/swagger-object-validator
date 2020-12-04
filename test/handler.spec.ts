@@ -39,17 +39,17 @@ describe('Handler', () => {
 
   it('should not crash when allowing null', (done) => {
     let validator = new Handler('https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/petstore.yaml', {
-        allowAdditionalProperties: true,
-        ignoreError: (error, value, schema, spec) => {
-          // Set Ignore cases where non-required fields are set to null rather than specified type/format
-          return error.errorType === ValidationErrorType.TYPE_MISMATCH && value === null;
-        }
-      });
+      allowAdditionalProperties: true,
+      ignoreError: (error, value, schema, spec) => {
+        // Set Ignore cases where non-required fields are set to null rather than specified type/format
+        return error.errorType === ValidationErrorType.TYPE_MISMATCH && value === null;
+      }
+    });
 
-    var pet = {
+    let pet = {
       id: 3942394023,
       name: 'Pippin',
-      tag: <any> null
+      tag: <any>null
     }
 
     validator.validateModel(pet, 'Pet', function (err, result) {
@@ -93,7 +93,7 @@ describe('Handler', () => {
         }
 
         // disallow Pet/name not starting with an upper case
-        let firstChar = test.substr(0,1);
+        let firstChar = test.substr(0, 1);
         if (firstChar !== firstChar.toUpperCase()) {
           return [
             {
@@ -144,7 +144,7 @@ describe('Handler', () => {
         }
 
         // disallow Pet/name not starting with an upper case
-        let firstChar = test.substr(0,1);
+        let firstChar = test.substr(0, 1);
         if (firstChar !== firstChar.toUpperCase()) {
           resolve([
             {

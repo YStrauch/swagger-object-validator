@@ -48,9 +48,20 @@ properties:
       $ref: '#/definitions/Pet'
     minItems: 1
     maxItems: 10
+    uniqueItems: true
+  ancestors:
+    type: array
+    items:
+      $ref: '#/definitions/Pet'
+    uniqueItems: true
   email:
     type: string
     pattern: '/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/'
+  cities_visited:
+    type: array
+    uniqueItems: true
+    items:
+      type: string
   nullable:
     type: string
     x-nullable: true

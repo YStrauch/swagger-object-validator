@@ -5,6 +5,7 @@ import { IValidatorConfig } from '../configuration-interfaces/validator-config';
 import { validateModel } from './ModelValidator';
 import { ITraceStep, IValidationError, ITypeValidationError, IConstraintsError, ValidationErrorType } from '../result';
 import { pushError } from '../helpers/pushError';
+import { hasDuplicates } from '../helpers/duplicates';
 
 export function validateArray(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   let errors: Array<IValidationError> = [];
@@ -39,7 +40,19 @@ export function validateArray(test: any, schema: Swagger.Schema, spec: Swagger.S
   }
 
   if (schema.uniqueItems) {
-    console.warn('WARNING: uniqueItems not supported (you found literally the only swagger feature that is currently unsupported)');
+    if (test.length > config.disableUniqueItemsOver) {
+      if (!config.suppressUniqueItemsWarning) {
+        console.warn('The Swagger Spec specifies a uniqueItem constraint on an array of length ' + test.length + ' which is more than the max size of ' + config.disableUniqueItemsOver + '. The constraint will NOT be checked. You can change the cap and disable this message in your validator config. Further warnings of this type will be suppressed.');
+        config.suppressUniqueItemsWarning = true;
+      }
+    } else if (hasDuplicates(test)) {
+      pushError(<IConstraintsError>{
+        errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
+        trace: trace,
+        constraintName: 'uniqueItems',
+        constraintValue: schema.uniqueItems
+      }, errors, test, schema, spec, config);
+    }
   }
 
   let promises: Array<Promise<IValidationError[]>> = [];

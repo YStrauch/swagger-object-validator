@@ -197,8 +197,6 @@ function _download(path: string, config: IValidatorConfig): Promise<any> {
     return cache[url];
   }
 
-
-
   let loadPromise = new Promise<Swagger.Spec>((resolve, reject) => {
     downloadMethod(path, (response) => _downloadStarted(response, extension, config, resolve, reject))
       .on('error', function (err: any) {

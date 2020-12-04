@@ -1,5 +1,4 @@
 import * as Swagger from 'swagger-schema-official';
-import * as Promise from 'bluebird';
 
 import { ITraceStep, IValidationError, ICustomValidationError} from '../result';
 
@@ -7,6 +6,8 @@ export interface IValidatorConfig {
   partialsDir?: string;
   allowAdditionalProperties?: boolean;
   allowXNullable?: boolean;
+  disableUniqueItemsOver?: number; // defaults to 100
+  suppressUniqueItemsWarning?: boolean;
   disallowHttp?: boolean;
   disallowHttps?: boolean;
   customValidation?: (

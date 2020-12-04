@@ -219,16 +219,21 @@ validator.validateModel({'name': 'Homer'}, schema).then(result => {
 You can hand in a configuration object. Before diving in each of them let's look over it quickly:
 ```TypeScript
 interface IValidatorConfig {
-  // for relative $refs:
+  // for relative $refs, defaults to './'
   partialsDir?: string;
 
-  // allow additional properties not defined in the Spec
+  // allow additional properties not defined in the Spec, defaults to false
   allowAdditionalProperties?: boolean;
 
-  // allow usage of x-nullable for properties, defaults to disallow
+  // allow usage of x-nullable for properties, defaults to false
   allowXNullable?: boolean;
 
-  // HTTP and HTTPS are allowed by default
+  // will not check for uniqueItems constraint if there are more than this many, defaults to 100
+  disableUniqueItemsOver?: number;
+  // suppresses the console warning when uniqueItems was disabled due to disableUniqueItemsOver, defaults to false
+  suppressUniqueItemsWarning?: boolean;
+
+  // allow fetching of HTTP and HTTPS resources, both default to true
   disallowHttp?: boolean;
   disallowHttps?: boolean;
 
@@ -269,7 +274,7 @@ The last kind of $refs, the relative ones, uses process.cwd() to determine the a
 
 ```TypeScript
 let config = {
-    partialsDir: '/some/path/'
+  partialsDir: '/some/path/'
 }
 let validator = new SwaggerValidator.Handler('spec.yml', config);
 ```
@@ -309,6 +314,26 @@ let config: IValidatorConfig = {
 };
 ```
 
+## Limiting the Unique Items Constraint
+Since version 1.4.0, this library implements the `uniqueItems` constraint. This constraint can be set on array specs to disallow duplicate items and emit a ConstraintViolation if needed.
+
+Detecting duplicate items needs to compare all items pairwise, and since items can be of arbitrary depth, this could bring drastic performance bottlenecks when you have a big number of items (or very complex items).
+
+To prevent the validator to get stuck on this, by default it will never validate arrays for uniqueness that have more than 100 elements. You can change that cap with the `disableUniqueItemsOver` in your validator config to accommodate your needs and hardware.
+
+If the cap is exceeded, a console warning will be emitted by default. You can disable this warning by setting `suppressUniqueItemsWarning` to true in your validator config.
+
+For example, if you want to validate unique lists of up to 300 elements, you can change the cap and disable warnings like so:
+
+```TypeScript
+let config = {
+  disableUniqueItemsOver: 300,
+  suppressUniqueItemsWarning: true
+}
+let validator = new SwaggerValidator.Handler('spec.yml', config);
+```
+
+Just remember that the algorithm will scale exponentially in the number of items.
 
 ## Ignoring errors
 You may want to ignore certain errors. Let's assume you need some magic to allow a certain
@@ -506,6 +531,9 @@ Missing required property:
 ## 1.3.0
 - Fixed typo, changed ValidationErrorType from CONSTRAINTS_VIOATION to CONSTRAINTS_VIOLATION (added missing L)
 - If you call `validateModel()` without a full-fledged spec (i.e. just the model definition), the first error step did previously not have a name. This was changed to the dedicated name 'root'.
+
+## 1.4.0
+Added support for `uniqueItems`. Please also read about the default cap of 100 items [here](#Limiting-the-Unique-Items-Constraint).
 
 # Development
 Wanna help? Sure. Please make sure to use an IDE with TSLint and EditorConfig installed. Always work test-driven, for each feature or bug you fix there needs to be a test.

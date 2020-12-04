@@ -7,7 +7,6 @@ import { ITraceStep,
   IValidationError,
   ITypeValidationError,
   ValidationErrorType,
-  ValidationResult,
   getTraceString
 } from '../result';
 import { pushError } from '../helpers/pushError';
@@ -120,8 +119,6 @@ export function validateObject(test: any, schema: ISchemaWithNullable, spec: Swa
           } else {
             childValidation.push(validateModel(currentPropertyTest, currentPropertySchema, spec, config, newTrace));
           }
-
-
         }
       }
 
@@ -203,64 +200,6 @@ function findDerivedObjects(abstractClass: Swagger.Schema, config: IValidatorCon
         })
         .then(parents => parents.length > 0)
     })
-  // .map((namedSchema: INamedSchema) => {
-  //   if (namedSchema.schema.discriminator) {
-  //     // Multi-Polymorphism. The child class itself is another parent class with discriminator
-  //     return findDerivedObjects(namedSchema.schema, config, spec)
-  //       .then(others => {
-  //         others.push(namedSchema);
-  //         return others;
-  //       })
-  //     } else {
-  //       return [namedSchema];
-  //     }
-  // })
-  // // flatten
-  // .reduce(function(prev, cur){
-  //   return prev.concat(cur);
-  // }, []);
-
-  // // let derivedObjects: Array<Promise<{ schema: Swagger.Schema, schemaName: string }> | undefined> = [];
-  // let derivedObjects: Promise<Array<{ schema: Swagger.Schema, schemaName: string }>>;
-
-  // let stopLoop = false;
-
-  // for (let possibleDerivedClassName in spec.definitions) {
-  //   if (stopLoop) {
-  //     break;
-  //   }
-
-  //   derivedObjects = loadSchemaByName(possibleDerivedClassName, spec, config)
-  //       .then(schema => extendAllAllOfs(schema, config, spec))
-  //       .then((possibleDerivedClass: Swagger.Schema) => {
-  //         return isDerived(possibleDerivedClass, abstractClass, config, spec)
-  //           .then(derived => {
-  //             if (!derived) {
-  //               return [];
-  //             }
-
-  //             let found = [{
-  //               schema: possibleDerivedClass,
-  //               schemaName: possibleDerivedClassName
-  //             }];
-
-  //             if (possibleDerivedClass.discriminator) {
-  //               // Multi-Polymorphism. The child class itself is another parent class with discriminator
-  //               return findDerivedObjects(possibleDerivedClass, config, spec)
-  //                 .then(grandChildren => {
-  //                   found.push(...grandChildren);
-  //                   return found;
-  //                 })
-  //             }
-
-  //             //   stopLoop = true;
-  //             return found;
-
-  //       });
-  //     });
-  // }
-
-  // return derivedObjects;
 }
 
 // finds the concrete class to the model test respecting polymorphism
@@ -308,36 +247,4 @@ function findPolymorphicConcreteClass(abstractClass: Swagger.Schema, trace: Arra
 
       return derivedObject.schema;
     });
-
-  //   return derivedObjects.filter(derivedObject => {
-  //     // we found a derived object. now we have to check whether the discriminator name matches (-> the swagger way)
-
-  //     // or, following an enum polymorphism, where enums are used
-  //     // check, if parent object uses enum, and if child object correctly chose on of the parent object enums
-  //     if (!validPolymorhpism && abstractClass.properties[abstractClass.discriminator].enum && abstractClass.properties[abstractClass.discriminator].enum.indexOf(test[abstractClass.discriminator]) !== -1) {
-  //       if (derivedObject.schema.properties[abstractClass.discriminator].enum
-  //         && derivedObject.schema.properties[abstractClass.discriminator].enum.length === 1
-  //         && derivedObject.schema.properties[abstractClass.discriminator].enum[0] === test[abstractClass.discriminator]
-  //       ){
-  //         validPolymorhpism = true;
-  //       }
-  //     }
-
-  //     if (validPolymorhpism) {
-  //       // manipulate the trace: set the concrete name within brackets, so it will look like Medium<Image>
-  //       trace[trace.length - 1].concreteModel = derivedObject.schemaName;
-  //     }
-
-  //     return validPolymorhpism;
-  //   });
-  // })
-  // .then(derivedObjects => {
-  //   if (derivedObjects.length === 0) {
-  //     return Promise.reject(`Polymorphism Error: No concrete object found. Trace: ${getTraceString(trace)}`);
-  //   }
-  //   if (derivedObjects.length > 1) {
-  //     return Promise.reject(`Polymorphism Error: More than one concrete object found. Trace: ${getTraceString(trace)}`);
-  //   }
-  //   return Promise.resolve(derivedObjects[0].schema);
-  // });
 }

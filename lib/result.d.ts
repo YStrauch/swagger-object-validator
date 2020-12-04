@@ -21,7 +21,7 @@ export interface IEnumValidationError extends IValidationError {
 }
 export interface IConstraintsError extends IValidationError {
     constraintName: string;
-    constraintValue: number | string;
+    constraintValue: number | string | boolean;
 }
 export interface ICustomValidationError extends IValidationError {
     content?: any;

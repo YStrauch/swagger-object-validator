@@ -8,7 +8,6 @@ import {
   ITraceStep,
 } from './result';
 import { IValidatorConfig } from './configuration-interfaces/validator-config';
-import { assert } from 'console';
 
 export {
   IValidatorConfig,
@@ -23,8 +22,16 @@ export class Handler {
 
   constructor(swaggerSpec?: Swagger.Spec | string, config?: IValidatorConfig) {
     config = config || {};
-    this.config = config;
+    // Apply defaults
+    if (config.partialsDir === undefined) {
+      config.partialsDir = './';
+    }
 
+    if (config.disableUniqueItemsOver === undefined) {
+      config.disableUniqueItemsOver = 100;
+    }
+
+    this.config = config;
     this.swaggerSpec = loader(swaggerSpec, config);
 
   }
