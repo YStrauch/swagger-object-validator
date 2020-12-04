@@ -7,9 +7,6 @@ Just test it quickly and be amazed:
 [![Try it on RunKit](https://badge.runkitcdn.com/swagger-object-validator.svg)](https://npm.runkit.com/swagger-object-validator)
 
 
-*Please note:*
-Request validation and the validation of a swagger spec itself is explicitly not intended (there are other modules available), only the validation of the objects returned from the server is part of this module. Ensure that your swagger spec is valid to prevent unexpected errors.
-
 # Why this and not some other tool?
 The API is awesome, it gives you easy and full control over what's happening:
 - Every error has a detailed stack trace so you can find where and what is wrong easily
@@ -40,6 +37,9 @@ The following swagger specifications are validated:
 - TypeScript support
 
 # Quick start
+
+*Please ensure that the swagger spec itself is valid to prevent unexpected errors, this module does not verify the spec itself.*
+
 Let's assume you got a pet from your pet store and want to validate it.
 
 ## Using TypeScript
@@ -200,7 +200,7 @@ validator.validateModel(model, spec, (err, result) => {
     console.log(result.humanReadable());
 });
 ```
-## Inline models
+## Inline models / unnamed models
 If you need to validate a model against a definition that is *not* part of the *definitions* section, you can fetch the model specification like so:
 
 ```ts
@@ -503,7 +503,7 @@ Missing required property:
 ```
 
 # Potentially breaking Changes
-# 1.3.0
+## 1.3.0
 - Fixed typo, changed ValidationErrorType from CONSTRAINTS_VIOATION to CONSTRAINTS_VIOLATION (added missing L)
 - If you call `validateModel()` without a full-fledged spec (i.e. just the model definition), the first error step did previously not have a name. This was changed to the dedicated name 'root'.
 
