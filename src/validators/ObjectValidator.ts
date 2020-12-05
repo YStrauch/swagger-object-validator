@@ -1,6 +1,6 @@
 import * as Promise from 'bluebird';
-import * as Swagger from 'swagger-schema-official';
-import { IValidatorConfig } from '../configuration-interfaces/validator-config';
+import { ISpec, ISchema} from '../specs'
+import { IValidatorConfig } from '../validator-config';
 import { extendAllAllOfs } from '../helpers/allOf';
 import { loadSchema } from '../helpers/loader';
 import { pushError } from '../helpers/pushError';
@@ -15,19 +15,19 @@ import { validateModel } from './ModelValidator';
 
 
 interface ISwaggerProperties {
-  [propertyName: string]: Swagger.Schema;
+  [propertyName: string]: ISchema;
 }
 
 interface INamedSchema {
   name: string;
-  schema: Swagger.Schema;
+  schema: ISchema;
 }
 
-export interface ISchemaWithNullable extends Swagger.Schema {
+export interface ISchemaWithNullable extends ISchema {
   'x-nullable'?: boolean;
 }
 
-export function validateObject(test: any, schema: ISchemaWithNullable, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
+export function validateObject(test: any, schema: ISchemaWithNullable, spec: ISpec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   if (schema === undefined || spec === undefined) {
     throw new Error('Schema or spec is not defined');
   }
@@ -90,12 +90,12 @@ export function validateObject(test: any, schema: ISchemaWithNullable, spec: Swa
       for (let propertyName in test) {
         if (test.hasOwnProperty(propertyName)) {
           let currentPropertyTest = test[propertyName];
-          let currentPropertySchema: Swagger.Schema;
+          let currentPropertySchema: ISchema;
           if (schema.properties && schema.properties[propertyName]) {
             currentPropertySchema = schema.properties[propertyName];
           } else if (schema.additionalProperties) {
             let properties: ISwaggerProperties = <ISwaggerProperties>(<any>schema.additionalProperties);
-            currentPropertySchema = <Swagger.Schema>properties[propertyName];
+            currentPropertySchema = <ISchema>properties[propertyName];
           }
 
           let newTrace: Array<ITraceStep> = JSON.parse(JSON.stringify(trace));
@@ -134,9 +134,9 @@ export function validateObject(test: any, schema: ISchemaWithNullable, spec: Swa
 }
 
 // checks if possibleChild is derived from parent
-function isDerived(possibleChild: Swagger.Schema, parent: Swagger.Schema, config: IValidatorConfig, spec: Swagger.Spec): Promise<boolean> {
+function isDerived(possibleChild: ISchema, parent: ISchema, config: IValidatorConfig, spec: ISpec): Promise<boolean> {
   // again, this is hacky (we need the old allOf reference)
-  let allOf: [Swagger.Schema] = (<any>possibleChild)._allOf;
+  let allOf: [ISchema] = (<any>possibleChild)._allOf;
   if (!allOf) {
     return Promise.resolve(false);
   }
@@ -156,7 +156,7 @@ function isDerived(possibleChild: Swagger.Schema, parent: Swagger.Schema, config
 }
 
 // finds all derived objects to an abstract parent class, either directly or through multiple derivations
-function findDerivedObjects(abstractClass: Swagger.Schema, config: IValidatorConfig, spec: Swagger.Spec): Promise<INamedSchema[]> {
+function findDerivedObjects(abstractClass: ISchema, config: IValidatorConfig, spec: ISpec): Promise<INamedSchema[]> {
   const discriminatingFeature = abstractClass.discriminator;
 
   return Promise.resolve(Object.getOwnPropertyNames(spec.definitions))
@@ -194,7 +194,7 @@ function findDerivedObjects(abstractClass: Swagger.Schema, config: IValidatorCon
       // Lastly, ensure that we are actually an allOf of the abstract class!
       return Promise.resolve(namedSchema.schema.allOf)
         .map(ref => loadSchema(ref, spec, config))
-        .filter((parent: Swagger.Schema) => {
+        .filter((parent: ISchema) => {
           // Better not use parent === abstractClass or you can't validate a model with a dedicated spec with different object references
           return JSON.stringify(parent) === JSON.stringify(abstractClass);
         })
@@ -203,7 +203,7 @@ function findDerivedObjects(abstractClass: Swagger.Schema, config: IValidatorCon
 }
 
 // finds the concrete class to the model test respecting polymorphism
-function findPolymorphicConcreteClass(abstractClass: Swagger.Schema, trace: Array<ITraceStep>, test: any, config: IValidatorConfig, spec: Swagger.Spec): Promise<Swagger.Schema> {
+function findPolymorphicConcreteClass(abstractClass: ISchema, trace: Array<ITraceStep>, test: any, config: IValidatorConfig, spec: ISpec): Promise<ISchema> {
   let derivedObjects = findDerivedObjects(abstractClass, config, spec);
 
   return derivedObjects

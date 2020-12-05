@@ -1,6 +1,6 @@
 import * as Promise from 'bluebird';
-import * as Swagger from 'swagger-schema-official';
-import { IValidatorConfig } from './configuration-interfaces/validator-config';
+import { ISpec, ISchema} from './specs'
+import { IValidatorConfig } from './validator-config';
 import { loader, loadSchema, loadSchemaByName, resolveInternalPath } from './helpers/loader';
 import {
   ITraceStep, ValidationResult
@@ -9,17 +9,15 @@ import { validateModel } from './validators/ModelValidator';
 
 
 export * from './result';
-export {
-  IValidatorConfig,
-};
+export { IValidatorConfig };
 
 
 export class Handler {
   private config: IValidatorConfig;
 
-  public swaggerSpec: Promise<Swagger.Spec>;
+  public swaggerSpec: Promise<ISpec>;
 
-  constructor(swaggerSpec?: Swagger.Spec | string, config?: IValidatorConfig) {
+  constructor(swaggerSpec?: ISpec | string, config?: IValidatorConfig) {
     config = config || {};
     // Apply defaults
     if (config.partialsDir === undefined) {
@@ -36,7 +34,7 @@ export class Handler {
   }
 
 
-  public validateModel(test: any, schema: string | Swagger.Schema, cb?: (err: string, result?: ValidationResult) => void, trace?: Array<ITraceStep>): Promise<ValidationResult> {
+  public validateModel(test: any, schema: string | ISchema, cb?: (err: string, result?: ValidationResult) => void, trace?: Array<ITraceStep>): Promise<ValidationResult> {
     let promise = this.startValidation(test, schema, trace);
     if (cb) {
       promise
@@ -52,8 +50,8 @@ export class Handler {
 
   }
 
-  private startValidation(test: any, schema: string | Swagger.Schema, trace?: Array<ITraceStep>): Promise<ValidationResult> {
-    let schemaPromise: Promise<Swagger.Schema>;
+  private startValidation(test: any, schema: string | ISchema, trace?: Array<ITraceStep>): Promise<ValidationResult> {
+    let schemaPromise: Promise<ISchema>;
 
     return this.swaggerSpec.then(spec => {
       if (!trace) {

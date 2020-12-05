@@ -1,13 +1,13 @@
 import * as Promise from 'bluebird';
-import * as Swagger from 'swagger-schema-official';
-import { IValidatorConfig } from '../configuration-interfaces/validator-config';
+import { ISpec, ISchema} from '../specs'
+import { IValidatorConfig } from '../validator-config';
 import { hasDuplicates } from '../helpers/duplicates';
 import { pushError } from '../helpers/pushError';
 import { IConstraintsError, ITraceStep, ITypeValidationError, IValidationError, ValidationErrorType } from '../result';
 import { validateModel } from './ModelValidator';
 
 
-export function validateArray(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
+export function validateArray(test: any, schema: ISchema, spec: ISpec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   let errors: Array<IValidationError> = [];
 
   if (!Array.isArray(test)) {// fatal error (do not push, just exit)
@@ -63,7 +63,7 @@ export function validateArray(test: any, schema: Swagger.Schema, spec: Swagger.S
       let newTrace: Array<ITraceStep> = JSON.parse(JSON.stringify(trace));
       newTrace[newTrace.length - 1].arrayPos = index;
 
-      let items: Swagger.Schema[] = [];
+      let items: ISchema[] = [];
 
       if (Array.isArray(schema.items)) {
         items = schema.items;

@@ -1,26 +1,20 @@
 import * as Promise from 'bluebird';
-import * as Swagger from 'swagger-schema-official';
-import { IValidatorConfig } from '../configuration-interfaces/validator-config';
+import { ISpec, ISchema} from '../specs'
+import { IValidatorConfig } from '../validator-config';
 import { loadSchema } from '../helpers/loader';
 
 
-export interface IResolvedSchema extends Swagger.Schema {
-  allOfResolved?: boolean;
-  allOf?: IResolvedSchema[];
-}
-
-
-export function extendAllAllOfs(schema: IResolvedSchema, config: IValidatorConfig, spec: Swagger.Spec): Promise<IResolvedSchema> {
+export function extendAllAllOfs(schema: ISchema, config: IValidatorConfig, spec: ISpec): Promise<ISchema> {
   if (!schema.allOf || !schema.allOf.length || schema.allOfResolved) {
     return Promise.resolve(schema);
   }
 
-  let parentPromises: Array<Promise<IResolvedSchema>> = [];
+  let parentPromises: Array<Promise<ISchema>> = [];
 
   schema.allOf
     .filter(el => !el.allOfResolved)
-    .forEach((parentObject: IResolvedSchema) => {
-      let parentPromise: Promise<IResolvedSchema>;
+    .forEach((parentObject: ISchema) => {
+      let parentPromise: Promise<ISchema>;
       if (parentObject.$ref) {
 
         parentPromise = loadSchema(parentObject, spec, config);
@@ -50,7 +44,7 @@ export function extendAllAllOfs(schema: IResolvedSchema, config: IValidatorConfi
     });
 }
 
-function extend(from: IResolvedSchema, to: IResolvedSchema): IResolvedSchema {
+function extend(from: ISchema, to: ISchema): ISchema {
   // extend all required properties from parent object
   if (from.required) {
     if (to.required) {

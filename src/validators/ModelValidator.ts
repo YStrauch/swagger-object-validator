@@ -1,6 +1,6 @@
 import * as Promise from 'bluebird';
-import * as Swagger from 'swagger-schema-official';
-import { IValidatorConfig } from '../configuration-interfaces/validator-config';
+import { ISpec, ISchema} from '../specs'
+import { IValidatorConfig } from '../validator-config';
 import { extendAllAllOfs } from '../helpers/allOf';
 import { getTypeName } from '../helpers/getTypeName';
 import { loadSchema } from '../helpers/loader';
@@ -14,7 +14,7 @@ import { validateObject } from './ObjectValidator';
 import { validateString } from './StringValidator';
 
 
-export function validateModel(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
+export function validateModel(test: any, schema: ISchema, spec: ISpec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   if (!trace) {
     trace = [];
   }
@@ -27,7 +27,7 @@ export function validateModel(test: any, schema: Swagger.Schema, spec: Swagger.S
   return validateResolvedModel(test, schema, spec, config, trace);
 }
 
-function validateResolvedModel(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
+function validateResolvedModel(test: any, schema: ISchema, spec: ISpec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   if (schema.$ref) {
     return loadSchema(schema, spec, config)
       .then((schema) => validateResolvedModel(test, schema, spec, config, trace));

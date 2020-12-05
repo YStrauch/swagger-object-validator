@@ -4,8 +4,8 @@ import { ClientRequest, get as httpGet, IncomingMessage } from 'http';
 import { get as httpsGet } from 'https';
 import { safeLoad } from 'js-yaml';
 import * as path from 'path';
-import * as Swagger from 'swagger-schema-official';
-import { IValidatorConfig, IValidatorDebugConfig } from '../configuration-interfaces/validator-config';
+import { ISpec, ISchema} from '../specs'
+import { IValidatorConfig, IValidatorDebugConfig } from '../validator-config';
 
 
 let HTTPCache: {
@@ -13,7 +13,7 @@ let HTTPCache: {
 } = {};
 
 export interface ILoadCB {
-  (error: any, spec?: Swagger.Spec): void;
+  (error: any, spec?: ISpec): void;
 }
 
 type Primitive = boolean | number | string | null | undefined;
@@ -34,9 +34,9 @@ function splitPath(descriptor: string) {
   return [descriptor, undefined];
 }
 
-export function loader(input: Swagger.Spec | string, config: IValidatorConfig): Promise<Swagger.Spec> {
+export function loader(input: ISpec | string, config: IValidatorConfig): Promise<ISpec> {
   if (typeof (input) === 'string') {
-    return <Promise<Swagger.Spec>> _loadFromString(input, config);
+    return <Promise<ISpec>> _loadFromString(input, config);
   } else if (!input) {
     return Promise.resolve(null);
   } else {
@@ -45,7 +45,7 @@ export function loader(input: Swagger.Spec | string, config: IValidatorConfig): 
 }
 
 // find a schema by name
-export function loadSchemaByName(schemaName: string, spec: Swagger.Spec, config: IValidatorConfig): Promise<Swagger.Schema> {
+export function loadSchemaByName(schemaName: string, spec: ISpec, config: IValidatorConfig): Promise<ISchema> {
   let schema = spec.definitions[schemaName];
   if (!schema) {
     throw new Error(`Schema ${schemaName} not found in definitions`);
@@ -53,7 +53,7 @@ export function loadSchemaByName(schemaName: string, spec: Swagger.Spec, config:
   return loadSchema(schema, spec, config);
 }
 
-export function resolveInternalPath(path: string, obj: IObject | Swagger.Schema): IObject {
+export function resolveInternalPath(path: string, obj: IObject | ISchema): IObject {
   if (!path.startsWith('#/')) {
     throw new Error(`Path ${path} not a hashed path`);
   }
@@ -77,7 +77,7 @@ export function resolveInternalPath(path: string, obj: IObject | Swagger.Schema)
 }
 
 
-export function loadSchema(schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig): Promise<Swagger.Schema> {
+export function loadSchema(schema: ISchema, spec: ISpec, config: IValidatorConfig): Promise<ISchema> {
   if (!schema.$ref) {
     return Promise.resolve(schema);
   }
@@ -85,7 +85,7 @@ export function loadSchema(schema: Swagger.Schema, spec: Swagger.Spec, config: I
   return _loadFromString(schema.$ref, config, spec).then(dereferencedSchema => replaceRef(schema, dereferencedSchema));
 }
 
-// function loadLocalSchema(schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig): Promise<Swagger.Schema> {
+// function loadLocalSchema(schema: ISchema, spec: ISpec, config: IValidatorConfig): Promise<ISchema> {
 //   if (schema.$ref.indexOf('#/') === 0) {
 //     return loadSchema(resolveInternalPath(schema.$ref, spec), spec, config);
 //   }
@@ -95,7 +95,7 @@ export function loadSchema(schema: Swagger.Schema, spec: Swagger.Spec, config: I
 // }
 
 // after a reference was loaded, replace it so it won't be dereferenced twice
-function replaceRef(schema: Swagger.Schema, dereferencedSchema: Swagger.Schema) {
+function replaceRef(schema: ISchema, dereferencedSchema: ISchema) {
   delete schema.$ref;
 
   for (let propertyName in dereferencedSchema) {
@@ -107,7 +107,7 @@ function replaceRef(schema: Swagger.Schema, dereferencedSchema: Swagger.Schema) 
   return schema;
 }
 
-function _loadFromString(fullPath: string, config: IValidatorConfig, spec?: Swagger.Spec): Promise<Swagger.Spec | Swagger.Schema> {
+function _loadFromString(fullPath: string, config: IValidatorConfig, spec?: ISpec): Promise<ISpec | ISchema> {
   let [filePath, internalPath] = splitPath(fullPath);
   const extension = path.extname(filePath);
 

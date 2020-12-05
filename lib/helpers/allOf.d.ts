@@ -1,8 +1,4 @@
 import * as Promise from 'bluebird';
-import * as Swagger from 'swagger-schema-official';
-import { IValidatorConfig } from '../configuration-interfaces/validator-config';
-export interface IResolvedSchema extends Swagger.Schema {
-    allOfResolved?: boolean;
-    allOf?: IResolvedSchema[];
-}
-export declare function extendAllAllOfs(schema: IResolvedSchema, config: IValidatorConfig, spec: Swagger.Spec): Promise<IResolvedSchema>;
+import { ISpec, ISchema } from '../specs';
+import { IValidatorConfig } from '../validator-config';
+export declare function extendAllAllOfs(schema: ISchema, config: IValidatorConfig, spec: ISpec): Promise<ISchema>;

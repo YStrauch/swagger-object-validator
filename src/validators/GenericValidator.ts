@@ -1,17 +1,13 @@
 import * as Promise from 'bluebird';
-import * as Swagger from 'swagger-schema-official';
-import { IValidatorConfig } from '../configuration-interfaces/validator-config';
+import { ISpec, ISchema} from '../specs'
+import { IValidatorConfig } from '../validator-config';
 import { getTypeName } from '../helpers/getTypeName';
 import { pushError } from '../helpers/pushError';
 import { ITraceStep, IValidationError, ValidationErrorType } from '../result';
 
 
-export interface ISchemaWithNullable extends Swagger.Schema {
-  'x-nullable'?: boolean;
-}
-
 // checks for simple type mismatches (numbers, strings, objects etc)
-export function validateType(test: any, schema: ISchemaWithNullable, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
+export function validateType(test: any, schema: ISchema, spec: ISpec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   let errors: Array<IValidationError> = [];
 
   let typeIs = getTypeName(test);

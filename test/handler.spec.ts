@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import { join } from 'path';
-import { IValidatorConfig } from '../src/configuration-interfaces/validator-config';
+import { IValidatorConfig } from '../src/validator-config';
 import { Handler } from '../src/handler';
 import { ICustomValidationError, ValidationErrorType } from '../src/result';
 

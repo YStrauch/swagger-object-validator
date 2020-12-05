@@ -1,5 +1,5 @@
-import * as Swagger from 'swagger-schema-official';
-import { ICustomValidationError, ITraceStep, IValidationError } from '../result';
+import { ISpec, ISchema} from './specs'
+import { ICustomValidationError, ITraceStep, IValidationError } from './result';
 
 export interface IValidatorConfig {
   partialsDir?: string;
@@ -11,8 +11,8 @@ export interface IValidatorConfig {
   disallowHttps?: boolean;
   customValidation?: (
     test: any,
-    schema: Swagger.Schema,
-    spec: Swagger.Spec,
+    schema: ISchema,
+    spec: ISpec,
     trace: Array<ITraceStep>,
     otherErrors: Array<ICustomValidationError>,
     resolve?: (validationErrors: ICustomValidationError[]) => void,
@@ -21,8 +21,8 @@ export interface IValidatorConfig {
   ignoreError?: (
     error: IValidationError,
     value: any,
-    schema: Swagger.Schema,
-    spec: Swagger.Spec
+    schema: ISchema,
+    spec: ISpec
   ) => boolean;
 }
 

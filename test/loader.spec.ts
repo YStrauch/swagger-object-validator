@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import { join } from 'path';
-import { IValidatorDebugConfig } from '../src/configuration-interfaces/validator-config';
+import { IValidatorDebugConfig } from '../src/validator-config';
 import { Handler } from '../src/handler';
 
 const expect = chai.expect;
