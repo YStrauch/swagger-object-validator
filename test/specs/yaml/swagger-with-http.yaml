@@ -5,15 +5,30 @@ info:
   license:
     name: MIT
 definitions:
-  PetsFromYaml:
+  PetsFromYamlWithInternalRef:
     type: array
     items:
       $ref: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/petstore.yaml#/definitions/Pet'
-  PetsFromJSON:
+  PetsFromYamlDirect:
+    type: array
+    items:
+      $ref: 'https://raw.githubusercontent.com/YStrauch/swagger-object-validator/master/test/specs/yaml/definitions/pet.yml'
+  PetsFromJSONWithInternalRef:
     type: array
     items:
       $ref: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore.json#/definitions/Pet'
-
+  PetsFromJSONDirect:
+    type: array
+    items:
+      $ref: 'https://raw.githubusercontent.com/YStrauch/swagger-object-validator/master/test/specs/json/definitions/pet.json'
+  PetsRelativeTo:
+    type: array
+    items:
+      $ref: './definitions/pet.yml'
+  PetsRelativeToFileSystem:
+    type: array
+    items:
+      $ref: 'swagger.yaml#/definitions/Pet'
 paths:
   /:
     get:

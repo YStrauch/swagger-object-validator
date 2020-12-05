@@ -1,7 +1,7 @@
 import * as Promise from 'bluebird';
 import * as Swagger from 'swagger-schema-official';
 import { IValidatorConfig } from './configuration-interfaces/validator-config';
-import { loader, loadSchema, loadSchemaByName, resolveHashedPath } from './helpers/loader';
+import { loader, loadSchema, loadSchemaByName, resolveInternalPath } from './helpers/loader';
 import {
   ITraceStep, ValidationResult
 } from './result';
@@ -68,7 +68,7 @@ export class Handler {
         });
 
         if (schema.startsWith('#/')) {
-          schemaPromise = loadSchema(resolveHashedPath(schema, spec), spec, this.config);
+          schemaPromise = loadSchema(resolveInternalPath(schema, spec), spec, this.config);
         } else {
           schemaPromise = loadSchemaByName(schema, spec, this.config);
         }

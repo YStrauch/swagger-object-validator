@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import { join } from 'path';
+import { IValidatorDebugConfig } from '../src/configuration-interfaces/validator-config';
 import { Handler } from '../src/handler';
 
 const expect = chai.expect;
@@ -129,8 +130,9 @@ describe('Loader', () => {
   });
 
   it('should be able to disallow HTTPS', (done) => {
-    let config = {
-      disallowHttps: true
+    let config: IValidatorDebugConfig = {
+      disallowHttps: true,
+      disableDownloadCache: true
     };
 
     let validator = new Handler('https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/petstore.yaml', config);
@@ -154,7 +156,7 @@ describe('Loader', () => {
     }).catch(err => done(new Error(err)));
   });
 
-  it('should load a yaml that loads refs via internet in yaml format', (done) => {
+  it('should load a yaml that loads refs via internet in yaml format with internal ref', (done) => {
     let dir = join(__dirname, 'specs', 'yaml');
     let json = join(dir, 'swagger-with-http.yaml');
     let validator = new Handler(json, { partialsDir: dir });
@@ -170,14 +172,14 @@ describe('Loader', () => {
       }
     ];
 
-    validator.validateModel(pets, 'PetsFromYaml').then(result => {
+    validator.validateModel(pets, 'PetsFromYamlWithInternalRef').then(result => {
       expect(result.errors).to.empty;
       done();
     }).catch(err => done(new Error(err)));
   });
 
 
-  it('should load a yaml that loads refs via internet in json format', (done) => {
+  it('should load a yaml that loads refs via internet in json format with internal ref', (done) => {
     let dir = join(__dirname, 'specs', 'yaml');
     let json = join(dir, 'swagger-with-http.yaml');
     let validator = new Handler(json, { partialsDir: dir });
@@ -193,7 +195,96 @@ describe('Loader', () => {
       }
     ];
 
-    validator.validateModel(pets, 'PetsFromJSON').then(result => {
+    validator.validateModel(pets, 'PetsFromJSONWithInternalRef').then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
+
+  it('should load a yaml that loads refs via internet in yaml format directly', (done) => {
+    let dir = join(__dirname, 'specs', 'yaml');
+    let json = join(dir, 'swagger-with-http.yaml');
+    let validator = new Handler(json, { partialsDir: dir });
+
+    let pets = [
+      {
+        id: 123,
+        name: 'Doge',
+        tag: 'Much Doge, such Tag'
+      }, {
+        id: 456,
+        name: 'Snek'
+      }
+    ];
+
+    validator.validateModel(pets, 'PetsFromYamlDirect').then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
+
+
+  it('should load a yaml that loads refs via internet in json format directly', (done) => {
+    let dir = join(__dirname, 'specs', 'yaml');
+    let json = join(dir, 'swagger-with-http.yaml');
+    let validator = new Handler(json, { partialsDir: dir });
+
+    let pets = [
+      {
+        id: 123,
+        name: 'Doge',
+        tag: 'Much Doge, such Tag'
+      }, {
+        id: 456,
+        name: 'Snek'
+      }
+    ];
+
+    validator.validateModel(pets, 'PetsFromJSONDirect').then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
+
+  it('should understand relative paths locally', (done) => {
+    let dir = join(__dirname, 'specs', 'yaml');
+    let json = join(dir, 'swagger-with-http.yaml');
+    let validator = new Handler(json, { partialsDir: dir });
+
+    let pets = [
+      {
+        id: 123,
+        name: 'Doge',
+        tag: 'Much Doge, such Tag'
+      }, {
+        id: 456,
+        name: 'Snek'
+      }
+    ];
+
+    validator.validateModel(pets, 'PetsRelativeTo').then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
+
+  it('should understand relative paths with internal ref locally', (done) => {
+    let dir = join(__dirname, 'specs', 'yaml');
+    let json = join(dir, 'swagger-with-http.yaml');
+    let validator = new Handler(json, { partialsDir: dir });
+
+    let pets = [
+      {
+        id: 123,
+        name: 'Doge',
+        tag: 'Much Doge, such Tag'
+      }, {
+        id: 456,
+        name: 'Snek'
+      }
+    ];
+
+    validator.validateModel(pets, 'PetsRelativeToFileSystem').then(result => {
       expect(result.errors).to.empty;
       done();
     }).catch(err => done(new Error(err)));
@@ -203,7 +294,13 @@ describe('Loader', () => {
   it('should disallow a yaml that loads refs via internet in json format when http is disallowed', (done) => {
     let dir = join(__dirname, 'specs', 'yaml');
     let json = join(dir, 'swagger-with-http.yaml');
-    let validator = new Handler(json, { partialsDir: dir, disallowHttp: true, disallowHttps: true });
+    const config: IValidatorDebugConfig = {
+      partialsDir: dir,
+      disallowHttp: true,
+      disallowHttps: true,
+      disableDownloadCache: true
+    }
+    let validator = new Handler(json, config);
 
     let pets = [
       {
@@ -216,7 +313,7 @@ describe('Loader', () => {
       }
     ];
 
-    validator.validateModel(pets, 'PetsFromJSON').then(result => {
+    validator.validateModel(pets, 'PetsFromJSONDirect').then(result => {
       done(new Error('No HTTPS error was thrown'));
     }).catch(err => {
       expect(err).to.eq('Definition needs HTTPS, which is disallowed');

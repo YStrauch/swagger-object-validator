@@ -25,3 +25,7 @@ export interface IValidatorConfig {
     spec: Swagger.Spec
   ) => boolean;
 }
+
+export interface IValidatorDebugConfig extends IValidatorConfig {
+  disableDownloadCache?: boolean;
+}

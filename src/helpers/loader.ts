@@ -3,22 +3,40 @@ import { existsSync, readFile } from 'fs';
 import { ClientRequest, get as httpGet, IncomingMessage } from 'http';
 import { get as httpsGet } from 'https';
 import { safeLoad } from 'js-yaml';
-import { extname, isAbsolute, join, resolve } from 'path';
+import * as path from 'path';
 import * as Swagger from 'swagger-schema-official';
-import { IValidatorConfig } from '../configuration-interfaces/validator-config';
+import { IValidatorConfig, IValidatorDebugConfig } from '../configuration-interfaces/validator-config';
 
 
-let cache: {
-  [url: string]: Promise<Swagger.Spec>
+let HTTPCache: {
+  [url: string]: Promise<string>
 } = {};
 
 export interface ILoadCB {
   (error: any, spec?: Swagger.Spec): void;
 }
 
+type Primitive = boolean | number | string | null | undefined;
+interface IObject {
+  [key: string]: IObject | Primitive;
+}
+
+function splitPath(descriptor: string) {
+  // Splits a schema descriptor at #/
+  const hashPos = descriptor.indexOf('#/');
+  if (hashPos !== -1) {
+    const fileName = descriptor.substr(0, hashPos);
+    const path = descriptor.substr(hashPos);
+
+    return [fileName, path];
+  }
+
+  return [descriptor, undefined];
+}
+
 export function loader(input: Swagger.Spec | string, config: IValidatorConfig): Promise<Swagger.Spec> {
   if (typeof (input) === 'string') {
-    return _loadSwaggerSpecFromString(input, config);
+    return <Promise<Swagger.Spec>> _loadFromString(input, config);
   } else if (!input) {
     return Promise.resolve(null);
   } else {
@@ -35,7 +53,7 @@ export function loadSchemaByName(schemaName: string, spec: Swagger.Spec, config:
   return loadSchema(schema, spec, config);
 }
 
-export function resolveHashedPath(path: string, spec: Swagger.Spec) {
+export function resolveInternalPath(path: string, obj: IObject | Swagger.Schema): IObject {
   if (!path.startsWith('#/')) {
     throw new Error(`Path ${path} not a hashed path`);
   }
@@ -44,7 +62,7 @@ export function resolveHashedPath(path: string, spec: Swagger.Spec) {
 
   const components = path.split('/');
 
-  let location: Object | any = spec;
+  let location: any = obj;
   for (let component of components) {
     if (!(location instanceof Object)) {
       throw new Error(`Path ${path} could not be found in spec, ${component} could not be resolved`);
@@ -64,64 +82,17 @@ export function loadSchema(schema: Swagger.Schema, spec: Swagger.Spec, config: I
     return Promise.resolve(schema);
   }
 
-  if (_needsDownload(schema.$ref)) {
-    return _download(schema.$ref, config)
-      .then((loadedSchemaOrSpec: Swagger.Schema | Swagger.Spec) => {
-        // the url may have a hash that describes the internal path within the downloaded document
-        let internalPath = schema.$ref.substr(schema.$ref.indexOf('#'));
-        if (!internalPath) {
-          // no hash means this is a schema not a spec
-          return loadedSchemaOrSpec;
-        }
-        let loadedSpec = <Swagger.Spec>loadedSchemaOrSpec;
-        if (!loadedSpec.host) {
-          loadedSpec.host = schema.$ref.substr(0, schema.$ref.indexOf('/'));
-        }
-
-        // we have a swagger spec
-        // replace the URL in $ref
-        let newSchema = JSON.parse(JSON.stringify(schema));
-        newSchema.$ref = internalPath;
-        return loadLocalSchema(newSchema, loadedSpec, config);
-      });
-  }
-
-  return loadLocalSchema(schema, spec, config);
+  return _loadFromString(schema.$ref, config, spec).then(dereferencedSchema => replaceRef(schema, dereferencedSchema));
 }
 
-function loadLocalSchema(schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig): Promise<Swagger.Schema> {
-  if (schema.$ref.charAt(0) === '.') {
-    let path: Array<string> = [];
-    // TODO: the whole relative to a server is not tested and surely won't work!
-    if (spec.schemes) {
-      if (spec.schemes.indexOf('https') !== -1) {
-        path.push('https://');
-      } else if (spec.schemes.indexOf('http') !== -1) {
-        path.push('http://');
-      } else {
-        return Promise.reject(`Method ${JSON.stringify(spec.schemes)} are not supported (supported is only HTTP and HTTPS)`);
-      }
-    }
-    if (spec.host) {
-      if (!spec.schemes) {
-        spec.schemes.push('https://');
-      }
-      path.push(spec.host);
-      if (spec.basePath) {
-        path.push(spec.basePath);
-      }
-    }
+// function loadLocalSchema(schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig): Promise<Swagger.Schema> {
+//   if (schema.$ref.indexOf('#/') === 0) {
+//     return loadSchema(resolveInternalPath(schema.$ref, spec), spec, config);
+//   }
 
-    return loader(join(...path, config.partialsDir, schema.$ref), config)
-      .then(dereferencedSchema => replaceRef(schema, dereferencedSchema));
-  }
-
-  if (schema.$ref.indexOf('#/') === 0) {
-    return loadSchema(resolveHashedPath(schema.$ref, spec), spec, config);
-  }
-
-  return Promise.reject(`$ref ${schema.$ref} cannot be resolved`);
-}
+//   return loader(join(config.partialsDir, schema.$ref), config)
+//     .then(dereferencedSchema => replaceRef(schema, dereferencedSchema));
+// }
 
 // after a reference was loaded, replace it so it won't be dereferenced twice
 function replaceRef(schema: Swagger.Schema, dereferencedSchema: Swagger.Schema) {
@@ -133,75 +104,83 @@ function replaceRef(schema: Swagger.Schema, dereferencedSchema: Swagger.Schema) 
     }
   }
 
-  return (schema);
+  return schema;
 }
 
-function _loadSwaggerSpecFromString(path: string, config: IValidatorConfig): Promise<Swagger.Spec> {
-  if (_needsDownload(path)) {
-    return _download(path, config);
-  }
+function _loadFromString(fullPath: string, config: IValidatorConfig, spec?: Swagger.Spec): Promise<Swagger.Spec | Swagger.Schema> {
+  let [filePath, internalPath] = splitPath(fullPath);
+  const extension = path.extname(filePath);
 
-  let extension = extname(path);
-
-  if (!isAbsolute(path)) {
-    path = resolve(process.cwd(), path);
+  let contents: Promise<any>;
+  if (!filePath) {
+    // Internal Reference
+    if (!internalPath) {
+      return Promise.reject(`Invalid path: ${fullPath}`);
+    }
+    if (!spec) {
+      return Promise.reject(`Missing Spec to resolve ${fullPath} against`);
+    }
+    // Only a #/reference
+    return loadSchema(resolveInternalPath(internalPath, spec), spec, config);
+  } else if (_needsDownload(filePath)) {
+    // Download
+    contents = _download(filePath, config);
   } else {
-    path = resolve(path);
+    // Local File System
+    if (!path.isAbsolute(filePath)) {
+      filePath = path.resolve(process.cwd(), config.partialsDir || '', filePath);
+    } else {
+      filePath = path.resolve(filePath);
+    }
+
+    if (!existsSync || !readFile) {
+      return Promise.reject('Cannot read file system, seems like you are using this module in frontend');
+    }
+    if (!existsSync(filePath)) {
+      return Promise.reject(`File ${filePath} does not exist`);
+    }
+
+    contents = new Promise((resolve, reject) => {
+      readFile(filePath, 'utf-8', (err, file) => {
+        if (err) {
+          reject(`Error loading file ${filePath}`);
+        } else {
+          resolve(file);
+        }
+      });
+    });
   }
 
-  if (!existsSync) {
-    return Promise.reject('Cannot read file system, seems like you are using this module in frontend');
-  }
-
-  if (!existsSync(path)) {
-    return Promise.reject(`File ${path} does not exist`);
-  }
-
-
+  // Parse json / yaml to object
   if (extension === '.json') {
-    return new Promise<Swagger.Spec>((resolve, reject) => {
-      if (!readFile) {
-        reject('Cannot read file system, seems like you are using this module in frontend');
-      }
-
-      readFile(path, 'utf-8', (err, file) => {
-        if (err) {
-          return reject('Error loading JSON file');
-        } else {
-          return resolve(JSON.parse(file));
-        }
-      });
-    });
-
+    contents = contents.then(file => JSON.parse(file));
   } else if (extension === '.yaml' || extension === '.yml') {
-    return new Promise((resolve, reject) => {
-      readFile(path, 'utf-8', (err, file) => {
-        if (err) {
-          return reject('Error loading yaml file');
-        } else {
-          return resolve(<Swagger.Spec>safeLoad(file));
-        }
-      });
-    });
+    contents = contents.then(file => <any> safeLoad(file));
   } else {
     return Promise.reject(`File extension ${extension} is not supported`);
   }
+
+  // Resolve inner path if needed
+  if (internalPath) {
+    contents = contents.then(obj => resolveInternalPath(internalPath, obj))
+  }
+
+  return contents;
 }
 
 function _needsDownload(path: string) {
   return path.indexOf('http://') === 0 || path.indexOf('https://') === 0;
 }
 
-function _download(path: string, config: IValidatorConfig): Promise<any> {
-  let extension = extname(path);
-  if (!extension) {
-    // a url may have a hash to seperate the external and internal URL
-    extension = extname(path.substr(0, path.indexOf('#')));
+function _download(url: string, config: IValidatorDebugConfig) {
+  if (!config.disableDownloadCache && HTTPCache[url]) {
+    // doing this after throwing the exception, or else we can have stupid race conditions while testing
+    return HTTPCache[url];
   }
 
   let downloadMethod: (options: any, callback?: (res: IncomingMessage) => void) => ClientRequest;
 
-  if (path.indexOf('http://') === 0) {
+  if (url.indexOf('http://') === 0) {
     if (config.disallowHttp) {
       return Promise.reject('Definition needs HTTP, which is disallowed');
     }
@@ -214,35 +193,30 @@ function _download(path: string, config: IValidatorConfig): Promise<any> {
     downloadMethod = httpsGet;
   }
 
-  let url = path.substr(0, path.indexOf('#'));
-  if (cache[url]) {
-    return cache[url];
-  }
-
-  let loadPromise = new Promise<Swagger.Spec>((resolve, reject) => {
-    downloadMethod(path, (response) => _downloadStarted(response, extension, config, resolve, reject))
+  let loadPromise = new Promise<string>((resolve, reject) => {
+    downloadMethod(url, (response) => _downloadStarted(response, config, resolve, reject))
       .on('error', function (err: any) {
+        if (!config.disableDownloadCache) {
+          delete HTTPCache[url];
+        }
         return reject(err.message);
       });
   });
 
-  cache[url] = loadPromise;
+  if (!config.disableDownloadCache) {
+    HTTPCache[url] = loadPromise;
+  }
+
   return loadPromise;
 }
 
-function _downloadStarted(response: IncomingMessage, extension: String, config: IValidatorConfig, resolve: (result: any) => void, reject: (err: any) => void) {
+function _downloadStarted(response: IncomingMessage, config: IValidatorConfig, resolve: (result: any) => void, reject: (err: any) => void) {
   response.setEncoding('utf8');
   let file = '';
   response.on('data', (chunk: any) => {
     file += chunk;
   });
   response.on('end', () => {
-    if (extension === '.yaml' || extension === '.yml') {
-      resolve(safeLoad(file));
-    } else if (extension === '.json') {
-      resolve(JSON.parse(file));
-    } else {
-      reject(`File extension ${extension} is not supported`);
-    }
+    resolve(file);
   });
 }

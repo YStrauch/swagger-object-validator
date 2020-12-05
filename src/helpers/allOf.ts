@@ -22,6 +22,7 @@ export function extendAllAllOfs(schema: IResolvedSchema, config: IValidatorConfi
     .forEach((parentObject: IResolvedSchema) => {
       let parentPromise: Promise<IResolvedSchema>;
       if (parentObject.$ref) {
+
         parentPromise = loadSchema(parentObject, spec, config);
       } else {
         parentPromise = Promise.resolve(parentObject);

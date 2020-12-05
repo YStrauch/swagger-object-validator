@@ -11,3 +11,6 @@ export interface IValidatorConfig {
     customValidation?: (test: any, schema: Swagger.Schema, spec: Swagger.Spec, trace: Array<ITraceStep>, otherErrors: Array<ICustomValidationError>, resolve?: (validationErrors: ICustomValidationError[]) => void, reject?: (reason: string) => void) => ICustomValidationError[] | void | undefined;
     ignoreError?: (error: IValidationError, value: any, schema: Swagger.Schema, spec: Swagger.Spec) => boolean;
 }
+export interface IValidatorDebugConfig extends IValidatorConfig {
+    disableDownloadCache?: boolean;
+}

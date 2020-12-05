@@ -231,7 +231,7 @@ interface IValidatorConfig {
   // suppresses the console warning when uniqueItems was disabled due to disableUniqueItemsOver, defaults to false
   suppressUniqueItemsWarning?: boolean;
 
-  // allow fetching of HTTP and HTTPS resources, both default to true
+  // disallow fetching of HTTP and HTTPS resources, both default to false
   disallowHttp?: boolean;
   disallowHttps?: boolean;
 
