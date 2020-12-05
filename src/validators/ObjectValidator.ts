@@ -1,18 +1,18 @@
-import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
-
+import * as Swagger from 'swagger-schema-official';
 import { IValidatorConfig } from '../configuration-interfaces/validator-config';
-import { validateModel } from './ModelValidator';
-import { ITraceStep,
-  IValidationError,
-  ITypeValidationError,
-  ValidationErrorType,
-  getTraceString
-} from '../result';
-import { pushError } from '../helpers/pushError';
-import { loadSchema } from '../helpers/loader';
 import { extendAllAllOfs } from '../helpers/allOf';
-import { load } from 'js-yaml';
+import { loadSchema } from '../helpers/loader';
+import { pushError } from '../helpers/pushError';
+import {
+  getTraceString, ITraceStep,
+
+  ITypeValidationError, IValidationError,
+
+  ValidationErrorType
+} from '../result';
+import { validateModel } from './ModelValidator';
+
 
 interface ISwaggerProperties {
   [propertyName: string]: Swagger.Schema;
@@ -32,7 +32,7 @@ export function validateObject(test: any, schema: ISchemaWithNullable, spec: Swa
     throw new Error('Schema or spec is not defined');
   }
 
-  if (config.allowXNullable === true && test === null && schema['x-nullable'] === true){
+  if (config.allowXNullable === true && test === null && schema['x-nullable'] === true) {
     return Promise.resolve([]);
   }
 
@@ -161,7 +161,7 @@ function findDerivedObjects(abstractClass: Swagger.Schema, config: IValidatorCon
 
   return Promise.resolve(Object.getOwnPropertyNames(spec.definitions))
     .map((name: string) => {
-      return <INamedSchema> {
+      return <INamedSchema>{
         name: name,
         schema: spec.definitions[name]
       };
@@ -169,7 +169,7 @@ function findDerivedObjects(abstractClass: Swagger.Schema, config: IValidatorCon
     .map((namedSchema: INamedSchema) => {
       return extendAllAllOfs(namedSchema.schema, config, spec)
         .then(schema => {
-          return <INamedSchema> {
+          return <INamedSchema>{
             name: namedSchema.name,
             schema: schema
           };
@@ -184,7 +184,7 @@ function findDerivedObjects(abstractClass: Swagger.Schema, config: IValidatorCon
       // Two ways of polymorphism, either using enums or the swagger way
       const enumPoly = schema.properties[discriminatingFeature].enum;
       if (enumPoly) {
-        return schema.properties[discriminatingFeature].enum.filter(e => abstractClass.properties[discriminatingFeature].enum.indexOf(''+e) !== -1).length > 0;
+        return schema.properties[discriminatingFeature].enum.filter(e => abstractClass.properties[discriminatingFeature].enum.indexOf('' + e) !== -1).length > 0;
       }
 
       // Swagger polymorphism cannot be decided here as we are not looking into the actual data, just into the spec
@@ -218,7 +218,7 @@ function findPolymorphicConcreteClass(abstractClass: Swagger.Schema, trace: Arra
       if (derivedObject.schema.properties[abstractClass.discriminator].enum
         && derivedObject.schema.properties[abstractClass.discriminator].enum.length === 1
         && derivedObject.schema.properties[abstractClass.discriminator].enum[0] === test[abstractClass.discriminator]
-      ){
+      ) {
         return true;
       }
 

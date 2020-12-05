@@ -1,18 +1,18 @@
-import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
-
-import { getTypeName } from '../helpers/getTypeName';
+import * as Swagger from 'swagger-schema-official';
 import { IValidatorConfig } from '../configuration-interfaces/validator-config';
-import { validateEnum } from './EnumValidator';
+import { extendAllAllOfs } from '../helpers/allOf';
+import { getTypeName } from '../helpers/getTypeName';
+import { loadSchema } from '../helpers/loader';
+import { ITraceStep, IValidationError } from '../result';
 import { validateArray } from './ArrayValidator';
+import { validateDate } from './DateValidator';
+import { validateEnum } from './EnumValidator';
 import { validateType } from './GenericValidator';
 import { validateNumber } from './NumberValidator';
 import { validateObject } from './ObjectValidator';
-import { validateDate } from './DateValidator';
 import { validateString } from './StringValidator';
-import { ITraceStep, ValidationResult, IValidationError } from '../result';
-import { loadSchema } from '../helpers/loader';
-import { extendAllAllOfs } from '../helpers/allOf';
+
 
 export function validateModel(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   if (!trace) {

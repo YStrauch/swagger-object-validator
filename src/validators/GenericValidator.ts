@@ -1,10 +1,10 @@
-import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
-
-import { getTypeName } from '../helpers/getTypeName';
+import * as Swagger from 'swagger-schema-official';
 import { IValidatorConfig } from '../configuration-interfaces/validator-config';
-import { ITraceStep, IValidationError, ValidationErrorType } from '../result';
+import { getTypeName } from '../helpers/getTypeName';
 import { pushError } from '../helpers/pushError';
+import { ITraceStep, IValidationError, ValidationErrorType } from '../result';
+
 
 export interface ISchemaWithNullable extends Swagger.Schema {
   'x-nullable'?: boolean;

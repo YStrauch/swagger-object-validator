@@ -1,14 +1,14 @@
+import * as chai from 'chai';
+import { join } from 'path';
 import { Handler } from '../src/handler';
 import { ITypeValidationError, ValidationErrorType } from '../src/result';
 
-import * as chai from 'chai';
 const expect = chai.expect;
 
-import { join } from 'path';
 
 let dir = join(__dirname, 'specs', 'yaml');
 let yaml = join(dir, 'swagger.yaml');
-let validator = new Handler(yaml, {partialsDir: dir});
+let validator = new Handler(yaml, { partialsDir: dir });
 
 describe('ObjectValidator', () => {
   it('should invalidate a nullable object when null and option is disabled', (done) => {
@@ -33,13 +33,13 @@ describe('ObjectValidator', () => {
 
       done();
     })
-    .catch(err => {
-      done(new Error(err));
-    });
+      .catch(err => {
+        done(new Error(err));
+      });
   });
 
   it('should validate a nullable object when null', (done) => {
-    let validator = new Handler(yaml, {allowXNullable: true, partialsDir: dir});
+    let validator = new Handler(yaml, { allowXNullable: true, partialsDir: dir });
 
     let nullableRef: {
       nullableRef: {
@@ -54,8 +54,8 @@ describe('ObjectValidator', () => {
 
       done();
     })
-    .catch(err => {
-      done(new Error(err));
-    });
+      .catch(err => {
+        done(new Error(err));
+      });
   });
 });

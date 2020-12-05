@@ -1,9 +1,9 @@
-import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
-import { ValidationResult, ITraceStep } from './result';
+import * as Swagger from 'swagger-schema-official';
 import { IValidatorConfig } from './configuration-interfaces/validator-config';
-export { IValidatorConfig, };
+import { ITraceStep, ValidationResult } from './result';
 export * from './result';
+export { IValidatorConfig, };
 export declare class Handler {
     private config;
     swaggerSpec: Promise<Swagger.Spec>;

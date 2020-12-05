@@ -1,6 +1,5 @@
 import * as Swagger from 'swagger-schema-official';
-
-import { ITraceStep, IValidationError, ICustomValidationError} from '../result';
+import { ICustomValidationError, ITraceStep, IValidationError } from '../result';
 
 export interface IValidatorConfig {
   partialsDir?: string;

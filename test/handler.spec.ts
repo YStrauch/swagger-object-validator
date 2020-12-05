@@ -1,12 +1,11 @@
-import { Handler } from '../src/handler';
-import { ValidationErrorType, ITypeValidationError, ICustomValidationError } from '../src/result';
-import { IValidatorConfig } from '../src/configuration-interfaces/validator-config';
-
 import * as chai from 'chai';
-import * as mocha from 'mocha';
+import { join } from 'path';
+import { IValidatorConfig } from '../src/configuration-interfaces/validator-config';
+import { Handler } from '../src/handler';
+import { ICustomValidationError, ValidationErrorType } from '../src/result';
+
 const expect = chai.expect;
 
-import { join } from 'path';
 
 let dir = join(__dirname, 'specs', 'yaml');
 let yaml = join(dir, 'swagger.yaml');
@@ -56,29 +55,6 @@ describe('Handler', () => {
       expect(result.errors).to.empty;
       done();
     });
-
-
-    // let config: IValidatorConfig = {
-    //   partialsDir: dir,
-    //   ignoreError: (error, value, schema) => {
-    //     return error.errorType === ValidationErrorType.TYPE_MISMATCH
-    //       && error.trace[0].stepName === 'Pet'
-    //       && error.trace[1].stepName === 'name'
-    //       && value === null;
-    //   }
-    // };
-
-    // let validator = new Handler(yaml, config);
-
-    // let pet: any = {
-    //   id: 123,
-    //   name: null
-    // };
-    // validator.validateModel(pet, 'Pet').then(result => {
-    //   expect(result.errors).to.empty;
-
-    //   done();
-    // }).catch(err => done(new Error(err)));
   });
 
   it('should allow custom validation synchronously', (done) => {

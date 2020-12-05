@@ -1,12 +1,12 @@
-import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
-
-import { IValidatorConfig } from '../configuration-interfaces/validator-config';
 import { existsSync, readFile } from 'fs';
-import { extname, join, resolve, isAbsolute } from 'path';
+import { ClientRequest, get as httpGet, IncomingMessage } from 'http';
+import { get as httpsGet } from 'https';
 import { safeLoad } from 'js-yaml';
-import { get as httpGet, IncomingMessage, ClientRequest }  from 'http';
-import { get as httpsGet }  from 'https';
+import { extname, isAbsolute, join, resolve } from 'path';
+import * as Swagger from 'swagger-schema-official';
+import { IValidatorConfig } from '../configuration-interfaces/validator-config';
+
 
 let cache: {
   [url: string]: Promise<Swagger.Spec>
@@ -31,7 +31,7 @@ export function loader(input: Swagger.Spec | string, config: IValidatorConfig): 
 export function loadSchemaByName(schemaName: string, spec: Swagger.Spec, config: IValidatorConfig): Promise<Swagger.Schema> {
   let schema = spec.definitions[schemaName];
   if (!schema) {
-    throw new Error (`Schema ${schemaName} not found in definitions`);
+    throw new Error(`Schema ${schemaName} not found in definitions`);
   }
   return loadSchema(schema, spec, config);
 }
@@ -51,7 +51,7 @@ export function loadSchema(schema: Swagger.Schema, spec: Swagger.Spec, config: I
           // no hash means this is a schema not a spec
           return loadedSchemaOrSpec;
         }
-        let loadedSpec = <Swagger.Spec> loadedSchemaOrSpec;
+        let loadedSpec = <Swagger.Spec>loadedSchemaOrSpec;
         if (!loadedSpec.host) {
           loadedSpec.host = schema.$ref.substr(0, schema.$ref.indexOf('/'));
         }
@@ -107,11 +107,11 @@ function replaceRef(schema: Swagger.Schema, dereferencedSchema: Swagger.Schema) 
 
   for (let propertyName in dereferencedSchema) {
     if (dereferencedSchema.hasOwnProperty(propertyName)) {
-      (<any>schema)[propertyName] =  (<any> dereferencedSchema)[propertyName];
+      (<any>schema)[propertyName] = (<any>dereferencedSchema)[propertyName];
     }
   }
 
-  return(schema);
+  return (schema);
 }
 
 function _loadSwaggerSpecFromString(path: string, config: IValidatorConfig): Promise<Swagger.Spec> {
@@ -157,7 +157,7 @@ function _loadSwaggerSpecFromString(path: string, config: IValidatorConfig): Pro
         if (err) {
           return reject('Error loading yaml file');
         } else {
-          return resolve(<Swagger.Spec> safeLoad(file));
+          return resolve(<Swagger.Spec>safeLoad(file));
         }
       });
     });
@@ -215,7 +215,7 @@ function _downloadStarted(response: IncomingMessage, extension: String, config: 
     file += chunk;
   });
   response.on('end', () => {
-    if (extension === '.yaml' || extension === '.yml')  {
+    if (extension === '.yaml' || extension === '.yml') {
       resolve(safeLoad(file));
     } else if (extension === '.json') {
       resolve(JSON.parse(file));

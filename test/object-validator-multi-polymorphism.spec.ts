@@ -1,12 +1,10 @@
-import { Handler } from '../src/handler';
-import { ValidationErrorType, ITypeValidationError, ICustomValidationError } from '../src/result';
-import { IValidatorConfig } from '../src/configuration-interfaces/validator-config';
-
 import * as chai from 'chai';
-import * as mocha from 'mocha';
+import { join } from 'path';
+import { Handler } from '../src/handler';
+import { ValidationErrorType } from '../src/result';
+
 const expect = chai.expect;
 
-import { join } from 'path';
 
 let dir = join(__dirname, 'specs', 'yaml');
 let yaml = join(dir, 'swagger.yaml');

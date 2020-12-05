@@ -1,16 +1,15 @@
-import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
-
-import { getTypeName } from '../helpers/getTypeName';
+import * as Swagger from 'swagger-schema-official';
 import { IValidatorConfig } from '../configuration-interfaces/validator-config';
-import { ITraceStep, IConstraintsError, ValidationErrorType } from '../result';
 import { pushError } from '../helpers/pushError';
+import { IConstraintsError, ITraceStep, ValidationErrorType } from '../result';
+
 
 export function validateString(test: string, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IConstraintsError>> {
   let errors: Array<IConstraintsError> = [];
 
   if (schema.minLength && test.length < schema.minLength) {
-    pushError(<IConstraintsError> {
+    pushError(<IConstraintsError>{
       errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
       trace: trace,
       constraintName: 'minLength',
@@ -19,7 +18,7 @@ export function validateString(test: string, schema: Swagger.Schema, spec: Swagg
   }
 
   if (schema.maxLength && test.length > schema.maxLength) {
-    pushError(<IConstraintsError> {
+    pushError(<IConstraintsError>{
       errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
       trace: trace,
       constraintName: 'maxLength',
@@ -35,7 +34,7 @@ export function validateString(test: string, schema: Swagger.Schema, spec: Swagg
       pattern = pattern.substr(1, pattern.length - 2);
     }
     if (!(new RegExp(pattern).test(test))) {
-      pushError(<IConstraintsError> {
+      pushError(<IConstraintsError>{
         errorType: ValidationErrorType.CONSTRAINTS_VIOLATION,
         trace: trace,
         constraintName: 'pattern',

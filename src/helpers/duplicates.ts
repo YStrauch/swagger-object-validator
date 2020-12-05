@@ -15,7 +15,7 @@ export function deepEqual(x: IComparable, y: IComparable, xParents?: Array<IComp
 
   // remember that NaN === NaN returns false
   // and isNaN(undefined) returns true
-  if (isNaN(<any> x) && isNaN(<any> y) && typeof x === 'number' && typeof y === 'number') {
+  if (isNaN(<any>x) && isNaN(<any>y) && typeof x === 'number' && typeof y === 'number') {
     return true;
   }
 
@@ -28,9 +28,9 @@ export function deepEqual(x: IComparable, y: IComparable, xParents?: Array<IComp
 
   // Primitives need to enforce type
   if (
-    (typeof(x) === 'string' || typeof(y) === 'string') ||
-    (typeof(x) === 'boolean' || typeof(y) === 'boolean') ||
-    (typeof(x) === 'number' || typeof(y) === 'number') ||
+    (typeof (x) === 'string' || typeof (y) === 'string') ||
+    (typeof (x) === 'boolean' || typeof (y) === 'boolean') ||
+    (typeof (x) === 'number' || typeof (y) === 'number') ||
     (x === null || y === null) ||
     (x === undefined || y === undefined)
   ) {
@@ -41,7 +41,7 @@ export function deepEqual(x: IComparable, y: IComparable, xParents?: Array<IComp
   if (Array.isArray(x) || Array.isArray(y)) {
     if ((Array.isArray(x) && Array.isArray(y))) {
       if (x.length === y.length) {
-        for(let i = 0; i < x.length; i++) {
+        for (let i = 0; i < x.length; i++) {
           if (deepEqual(x[i], y[i], xParents, yParents) === false) {
             return false;
           }
@@ -53,7 +53,7 @@ export function deepEqual(x: IComparable, y: IComparable, xParents?: Array<IComp
   }
 
   if (!(x instanceof Object && y instanceof Object)) {
-    throw Error('Object comparison failed, ' + typeof(x) + ' is not an allowed type');
+    throw Error('Object comparison failed, ' + typeof (x) + ' is not an allowed type');
   }
 
   // Check for infinitive linking loops

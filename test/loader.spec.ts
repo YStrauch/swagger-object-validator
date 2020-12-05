@@ -1,17 +1,16 @@
+import * as chai from 'chai';
+import { join } from 'path';
 import { Handler } from '../src/handler';
 
-import * as chai from 'chai';
-import * as mocha from 'mocha';
 const expect = chai.expect;
 
-import { join } from 'path';
 
 
 describe('Loader', () => {
   it('should load a yaml file', (done) => {
     let dir = join(__dirname, 'specs', 'yaml');
     let yaml = join(dir, 'swagger.yaml');
-    let validator = new Handler(yaml, {partialsDir: dir});
+    let validator = new Handler(yaml, { partialsDir: dir });
     let pet = {
       id: 123,
       name: 'Doge'
@@ -26,7 +25,7 @@ describe('Loader', () => {
   it('should load a json file', (done) => {
     let dir = join(__dirname, 'specs', 'json');
     let json = join(dir, 'swagger.json');
-    let validator = new Handler(json, {partialsDir: dir});
+    let validator = new Handler(json, { partialsDir: dir });
     let pet = {
       id: 123,
       name: 'Doge'
@@ -42,7 +41,7 @@ describe('Loader', () => {
     let dir = join(__dirname, 'specs', 'json');
     let json = join(dir, 'swagger.json');
     let object = require(json);
-    let validator = new Handler(object, {partialsDir: dir});
+    let validator = new Handler(object, { partialsDir: dir });
     let pet = {
       id: 123,
       name: 'Doge'
@@ -57,13 +56,13 @@ describe('Loader', () => {
     let validator = new Handler();
 
     let schema = {
-      type: "array",
+      type: 'array',
       items: {
-        type: "string"
+        type: 'string'
       }
     }
 
-    let model = ['1','2'];
+    let model = ['1', '2'];
 
     validator.validateModel(model, schema).then(result => {
       expect(result.errors).to.empty;
@@ -74,7 +73,7 @@ describe('Loader', () => {
   it('should be able to validate from paths model', (done) => {
     let dir = join(__dirname, 'specs', 'json');
     let json = require(join(dir, 'swagger.json'));
-    let validator = new Handler(json, {partialsDir: dir});
+    let validator = new Handler(json, { partialsDir: dir });
 
 
     let model = {
@@ -129,7 +128,7 @@ describe('Loader', () => {
   it('should load a yaml that loads refs via internet in yaml format', (done) => {
     let dir = join(__dirname, 'specs', 'yaml');
     let json = join(dir, 'swagger-with-http.yaml');
-    let validator = new Handler(json, {partialsDir: dir});
+    let validator = new Handler(json, { partialsDir: dir });
 
     let pets = [
       {
@@ -152,7 +151,7 @@ describe('Loader', () => {
   it('should load a yaml that loads refs via internet in json format', (done) => {
     let dir = join(__dirname, 'specs', 'yaml');
     let json = join(dir, 'swagger-with-http.yaml');
-    let validator = new Handler(json, {partialsDir: dir});
+    let validator = new Handler(json, { partialsDir: dir });
 
     let pets = [
       {
@@ -175,7 +174,7 @@ describe('Loader', () => {
   it('should disallow a yaml that loads refs via internet in json format when http is disallowed', (done) => {
     let dir = join(__dirname, 'specs', 'yaml');
     let json = join(dir, 'swagger-with-http.yaml');
-    let validator = new Handler(json, {partialsDir: dir, disallowHttp: true, disallowHttps: true});
+    let validator = new Handler(json, { partialsDir: dir, disallowHttp: true, disallowHttps: true });
 
     let pets = [
       {

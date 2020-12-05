@@ -1,9 +1,9 @@
-import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
-
+import * as Swagger from 'swagger-schema-official';
 import { IValidatorConfig } from '../configuration-interfaces/validator-config';
-import { ITraceStep, IValidationError, ITypeValidationError, IConstraintsError, ValidationErrorType } from '../result';
 import { pushError } from '../helpers/pushError';
+import { IConstraintsError, ITraceStep, ITypeValidationError, IValidationError, ValidationErrorType } from '../result';
+
 
 export function validateNumber(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   let errors: Array<IValidationError> = [];

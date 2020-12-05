@@ -1,10 +1,10 @@
-import { Handler } from '../src/handler';
-import { deepEqual, hasDuplicates } from '../src/helpers/duplicates';
-
 import * as chai from 'chai';
+import { join } from 'path';
+import { Handler } from '../src/handler';
+import { deepEqual } from '../src/helpers/duplicates';
+
 const expect = chai.expect;
 
-import { join } from 'path';
 
 let dir = join(__dirname, 'specs', 'yaml');
 let yaml = join(dir, 'swagger.yaml');
@@ -73,8 +73,8 @@ describe('ObjectComparator', () => {
         b: [1, 0]
       }
     };
-    const k = { a: 'text', b: <any> null };
-    const l = { a: 'text', b: <any> undefined };
+    const k = { a: 'text', b: <any>null };
+    const l = { a: 'text', b: <any>undefined };
 
     expect(deepEqual(a, b), 'a===b').to.true;
     expect(deepEqual(a, c), 'a!==c').to.false;

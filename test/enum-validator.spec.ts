@@ -1,15 +1,14 @@
+import * as chai from 'chai';
+import { join } from 'path';
 import { Handler } from '../src/handler';
 import { IEnumValidationError, ValidationErrorType } from '../src/result';
 
-import * as chai from 'chai';
-import * as mocha from 'mocha';
 const expect = chai.expect;
 
-import { join } from 'path';
 
 let dir = join(__dirname, 'specs', 'yaml');
 let yaml = join(dir, 'swagger.yaml');
-let validator = new Handler(yaml, {partialsDir: dir});
+let validator = new Handler(yaml, { partialsDir: dir });
 
 
 describe('EnumValidator', () => {
@@ -64,7 +63,7 @@ describe('EnumValidator', () => {
 
   });
 
-    it('should invalidate inexistent numeric enum', (done) => {
+  it('should invalidate inexistent numeric enum', (done) => {
     let pet = {
       id: 123,
       name: 'Doge',

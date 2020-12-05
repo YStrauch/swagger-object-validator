@@ -68,7 +68,7 @@ export function getTraceString(trace: Array<ITraceStep>) {
 }
 
 export class ValidationResult {
-  constructor(public errors: Array<IValidationError>) {};
+  constructor(public errors: Array<IValidationError>) { };
 
   public humanReadable(): String {
     if (this.errors.length === 0) {
@@ -114,7 +114,7 @@ export class ValidationResult {
           break;
 
         case ValidationErrorType.CONSTRAINTS_VIOLATION:
-          let violationError: IConstraintsError = <IConstraintsError> error;
+          let violationError: IConstraintsError = <IConstraintsError>error;
           ret.push('Constraint violation:');
           ret.push(`\t - Violation: ${violationError.constraintName}<${violationError.constraintValue}>`);
           ret.push(`\t - At ${getTraceString(error.trace)}`);

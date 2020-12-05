@@ -1,15 +1,14 @@
+import * as chai from 'chai';
+import { join } from 'path';
 import { Handler } from '../src/handler';
 import { ITypeValidationError, ValidationErrorType } from '../src/result';
 
-import * as chai from 'chai';
-import * as mocha from 'mocha';
 const expect = chai.expect;
 
-import { join } from 'path';
 
 let dir = join(__dirname, 'specs', 'yaml');
 let yaml = join(dir, 'swagger.yaml');
-let validator = new Handler(yaml, {partialsDir: dir});
+let validator = new Handler(yaml, { partialsDir: dir });
 
 describe('ObjectValidator', () => {
   it('should validate additional properties', (done) => {
@@ -98,7 +97,7 @@ describe('ObjectValidator', () => {
 
 
   it('should not invalidate additional properties when it is allowed', (done) => {
-    let validator = new Handler(yaml, {partialsDir: dir, allowAdditionalProperties: true});
+    let validator = new Handler(yaml, { partialsDir: dir, allowAdditionalProperties: true });
 
     let pet = {
       id: 123,

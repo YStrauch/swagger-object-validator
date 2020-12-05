@@ -1,15 +1,14 @@
+import * as chai from 'chai';
+import { join } from 'path';
 import { Handler } from '../src/handler';
 import { IConstraintsError, ValidationErrorType } from '../src/result';
 
-import * as chai from 'chai';
-import * as mocha from 'mocha';
 const expect = chai.expect;
 
-import { join } from 'path';
 
 let dir = join(__dirname, 'specs', 'yaml');
 let yaml = join(dir, 'swagger.yaml');
-let validator = new Handler(yaml, {partialsDir: dir});
+let validator = new Handler(yaml, { partialsDir: dir });
 
 
 describe('StringValidator', () => {
@@ -22,7 +21,7 @@ describe('StringValidator', () => {
     validator.validateModel(pet, 'Pet').then(result => {
       expect(result.errors).to.lengthOf(1);
 
-      let error: IConstraintsError = <IConstraintsError> result.errors[0];
+      let error: IConstraintsError = <IConstraintsError>result.errors[0];
       expect(error.errorType).to.equals(ValidationErrorType.CONSTRAINTS_VIOLATION);
       expect(error.trace).to.length(2);
       expect(error.trace[0].stepName).to.equals('Pet');
@@ -44,7 +43,7 @@ describe('StringValidator', () => {
     validator.validateModel(pet, 'Pet').then(result => {
       expect(result.errors).to.lengthOf(1);
 
-      let error: IConstraintsError = <IConstraintsError> result.errors[0];
+      let error: IConstraintsError = <IConstraintsError>result.errors[0];
       expect(error.errorType).to.equals(ValidationErrorType.CONSTRAINTS_VIOLATION);
       expect(error.trace).to.length(2);
       expect(error.trace[0].stepName).to.equals('Pet');
@@ -80,7 +79,7 @@ describe('StringValidator', () => {
     validator.validateModel(pet, 'Pet').then(result => {
       expect(result.errors).to.lengthOf(1);
 
-      let error: IConstraintsError = <IConstraintsError> result.errors[0];
+      let error: IConstraintsError = <IConstraintsError>result.errors[0];
       expect(error.errorType).to.equals(ValidationErrorType.CONSTRAINTS_VIOLATION);
       expect(error.trace).to.length(2);
       expect(error.trace[0].stepName).to.equals('Pet');

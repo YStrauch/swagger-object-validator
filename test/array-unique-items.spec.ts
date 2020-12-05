@@ -1,9 +1,9 @@
+import * as chai from 'chai';
+import { join } from 'path';
 import { Handler, IConstraintsError, ValidationErrorType } from '../src/handler';
 
-import * as chai from 'chai';
 const expect = chai.expect;
 
-import { join } from 'path';
 
 let dir = join(__dirname, 'specs', 'yaml');
 let yaml = join(dir, 'swagger.yaml');
@@ -62,13 +62,13 @@ describe('ArrayUniqueItemsValidator', () => {
     for (let i = 0; i < n_duplicates; i++) {
       ancestors.push({
         id: i,
-        name: 'Ancestor'+i,
-        cities_visited: ['1','2','3','4','5','6','7','8','9','10']
+        name: 'Ancestor' + i,
+        cities_visited: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
       });
     }
 
     // Duplicate the last one, i.e. worst case for performance
-    ancestors.push(JSON.parse(JSON.stringify(ancestors[n_duplicates-1])));
+    ancestors.push(JSON.parse(JSON.stringify(ancestors[n_duplicates - 1])));
 
     let pet = {
       id: 123,

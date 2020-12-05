@@ -1,18 +1,17 @@
-import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
-
-import { loader, loadSchemaByName } from './helpers/loader';
-import { validateModel } from './validators/ModelValidator';
-import {
-  ValidationResult,
-  ITraceStep,
-} from './result';
+import * as Swagger from 'swagger-schema-official';
 import { IValidatorConfig } from './configuration-interfaces/validator-config';
+import { loader, loadSchemaByName } from './helpers/loader';
+import {
+  ITraceStep, ValidationResult
+} from './result';
+import { validateModel } from './validators/ModelValidator';
 
+
+export * from './result';
 export {
   IValidatorConfig,
-}
-export * from './result';
+};
 
 
 export class Handler {
@@ -37,7 +36,7 @@ export class Handler {
   }
 
 
-  public validateModel(test: any, schema: string |  Swagger.Schema, cb?: (err: string, result?: ValidationResult) => void, trace?: Array<ITraceStep>): Promise<ValidationResult> {
+  public validateModel(test: any, schema: string | Swagger.Schema, cb?: (err: string, result?: ValidationResult) => void, trace?: Array<ITraceStep>): Promise<ValidationResult> {
     let promise = this.startValidation(test, schema, trace);
     if (cb) {
       promise
@@ -53,7 +52,7 @@ export class Handler {
 
   }
 
-  private startValidation(test: any, schema: string |  Swagger.Schema, trace?: Array<ITraceStep>): Promise<ValidationResult> {
+  private startValidation(test: any, schema: string | Swagger.Schema, trace?: Array<ITraceStep>): Promise<ValidationResult> {
     let schemaPromise: Promise<Swagger.Schema>;
 
     return this.swaggerSpec.then(spec => {

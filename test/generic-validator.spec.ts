@@ -1,10 +1,10 @@
+import * as chai from 'chai';
+import { join } from 'path';
 import { Handler } from '../src/handler';
 import { ITypeValidationError, ValidationErrorType } from '../src/result';
 
-import * as chai from 'chai';
 const expect = chai.expect;
 
-import { join } from 'path';
 
 let dir = join(__dirname, 'specs', 'yaml');
 let yaml = join(dir, 'swagger.yaml');
@@ -47,8 +47,6 @@ describe('GenericValidator', () => {
     let model = ['1', '2', '1']; // Should not be valid
     validator.validateModel(model, spec, (err, result) => {
       expect(result.errors).to.lengthOf(1);
-
-      console.log(result.humanReadable());
 
       done();
     });

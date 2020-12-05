@@ -1,8 +1,8 @@
-import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
-
+import * as Swagger from 'swagger-schema-official';
 import { IValidatorConfig } from '../configuration-interfaces/validator-config';
 import { loadSchema } from '../helpers/loader';
+
 
 export interface IResolvedSchema extends Swagger.Schema {
   allOfResolved?: boolean;

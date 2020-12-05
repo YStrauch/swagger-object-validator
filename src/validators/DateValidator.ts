@@ -1,10 +1,9 @@
-import * as Swagger from 'swagger-schema-official';
 import * as Promise from 'bluebird';
-
-import { getTypeName } from '../helpers/getTypeName';
+import * as Swagger from 'swagger-schema-official';
 import { IValidatorConfig } from '../configuration-interfaces/validator-config';
-import { ITraceStep, IValidationError, ITypeValidationError, ValidationErrorType } from '../result';
 import { pushError } from '../helpers/pushError';
+import { ITraceStep, IValidationError, ValidationErrorType } from '../result';
+
 
 export function validateDate(test: any, schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig, trace: Array<ITraceStep>): Promise<Array<IValidationError>> {
   let errors: Array<IValidationError> = [];
@@ -33,7 +32,7 @@ export function validateDate(test: any, schema: Swagger.Schema, spec: Swagger.Sp
   //  date-time       = full-date "T" full-time
 
   let correctFormat: boolean;
-  if (schema.format  === 'date') {
+  if (schema.format === 'date') {
     correctFormat = fullDate(test);
   } else {
     correctFormat = dateTime(test);
@@ -91,7 +90,7 @@ function timeSecFrac(test?: string) {
 }
 
 function timeNumOffset(test: string) {
-  let firstChar = test.substr(0,1);
+  let firstChar = test.substr(0, 1);
   if (firstChar !== '+' && firstChar !== '-') {
     return false;
   }
@@ -106,7 +105,7 @@ function timeNumOffset(test: string) {
 }
 
 function timeOffset(test: string) {
-  let firstChar = test.substr(0,1);
+  let firstChar = test.substr(0, 1);
   if (firstChar === 'Z' || firstChar === 'z') {
     return true;
   }
@@ -122,7 +121,7 @@ function partialTime(test: string) {
   let fragment: string;
   let indexOfDot = params[2].indexOf('.');
 
-  if(indexOfDot !== -1) {
+  if (indexOfDot !== -1) {
     fragment = params[2].substr(indexOfDot);
     params[2] = params[2].substr(0, indexOfDot);
   }
