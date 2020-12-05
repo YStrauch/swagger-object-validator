@@ -6,4 +6,5 @@ export interface ILoadCB {
 }
 export declare function loader(input: Swagger.Spec | string, config: IValidatorConfig): Promise<Swagger.Spec>;
 export declare function loadSchemaByName(schemaName: string, spec: Swagger.Spec, config: IValidatorConfig): Promise<Swagger.Schema>;
+export declare function resolveHashedPath(path: string, spec: Swagger.Spec): any;
 export declare function loadSchema(schema: Swagger.Schema, spec: Swagger.Spec, config: IValidatorConfig): Promise<Swagger.Schema>;

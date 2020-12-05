@@ -12,7 +12,6 @@ let cache: {
   [url: string]: Promise<Swagger.Spec>
 } = {};
 
-
 export interface ILoadCB {
   (error: any, spec?: Swagger.Spec): void;
 }
@@ -34,6 +33,29 @@ export function loadSchemaByName(schemaName: string, spec: Swagger.Spec, config:
     throw new Error(`Schema ${schemaName} not found in definitions`);
   }
   return loadSchema(schema, spec, config);
+}
+
+export function resolveHashedPath(path: string, spec: Swagger.Spec) {
+  if (!path.startsWith('#/')) {
+    throw new Error(`Path ${path} not a hashed path`);
+  }
+
+  path = path.substr(2);
+
+  const components = path.split('/');
+
+  let location: Object | any = spec;
+  for (let component of components) {
+    if (!(location instanceof Object)) {
+      throw new Error(`Path ${path} could not be found in spec, ${component} could not be resolved`);
+    }
+    if (!location.hasOwnProperty(component)) {
+      throw new Error(`Path ${path} could not be found in spec, ${component} could not be resolved`);
+    }
+    location = location[component];
+  }
+
+  return location;
 }
 
 
@@ -94,10 +116,10 @@ function loadLocalSchema(schema: Swagger.Schema, spec: Swagger.Spec, config: IVa
       .then(dereferencedSchema => replaceRef(schema, dereferencedSchema));
   }
 
-  if (schema.$ref.indexOf('#/definitions') === 0) {
-    let definitionName = schema.$ref.substr(14);
-    return loadSchemaByName(definitionName, spec, config);
+  if (schema.$ref.indexOf('#/') === 0) {
+    return loadSchema(resolveHashedPath(schema.$ref, spec), spec, config);
   }
+
   return Promise.reject(`$ref ${schema.$ref} cannot be resolved`);
 }
 

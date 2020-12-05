@@ -7,7 +7,7 @@ const expect = chai.expect;
 
 
 describe('Loader', () => {
-  it('should load a yaml file', (done) => {
+  it('should load a yaml file and validate pet by name', (done) => {
     let dir = join(__dirname, 'specs', 'yaml');
     let yaml = join(dir, 'swagger.yaml');
     let validator = new Handler(yaml, { partialsDir: dir });
@@ -21,8 +21,22 @@ describe('Loader', () => {
     }).catch(err => done(new Error(err)));
   });
 
+  it('should load a yaml file and validate pet by path', (done) => {
+    let dir = join(__dirname, 'specs', 'yaml');
+    let yaml = join(dir, 'swagger.yaml');
+    let validator = new Handler(yaml, { partialsDir: dir });
+    let pet = {
+      id: 123,
+      name: 'Doge'
+    };
+    validator.validateModel(pet, '#/definitions/Pet').then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
 
-  it('should load a json file', (done) => {
+
+  it('should load a json file and validate pet by name', (done) => {
     let dir = join(__dirname, 'specs', 'json');
     let json = join(dir, 'swagger.json');
     let validator = new Handler(json, { partialsDir: dir });
@@ -31,6 +45,21 @@ describe('Loader', () => {
       name: 'Doge'
     };
     validator.validateModel(pet, 'Pet').then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
+
+
+  it('should load a json file and validate pet by path', (done) => {
+    let dir = join(__dirname, 'specs', 'json');
+    let json = join(dir, 'swagger.json');
+    let validator = new Handler(json, { partialsDir: dir });
+    let pet = {
+      id: 123,
+      name: 'Doge'
+    };
+    validator.validateModel(pet, '#/definitions/Pet').then(result => {
       expect(result.errors).to.empty;
       done();
     }).catch(err => done(new Error(err)));
@@ -70,7 +99,7 @@ describe('Loader', () => {
     }).catch(err => done(new Error(err)));
   });
 
-  it('should be able to validate from paths model', (done) => {
+  it('should be able to validate from paths model given directly', (done) => {
     let dir = join(__dirname, 'specs', 'json');
     let json = require(join(dir, 'swagger.json'));
     let validator = new Handler(json, { partialsDir: dir });
