@@ -1,17 +1,21 @@
 {
   "discriminator": "type",
   "required": [
-    "type"
+     "type"
   ],
   "properties": {
-    "type": {
-      "type": "string"
-    },
-    "creation": {
-      "type": "integer"
-    },
-    "owner": {
-      "type": "string"
-    }
+     "type": {
+        "type": "string"
+     },
+     "creation": {
+        "type": "integer"
+     },
+     "owner": {
+        "type": "string"
+     },
+     "size": {
+        "type": "number",
+        "multipleOf": 32
+     }
   }
 }

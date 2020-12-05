@@ -1,34 +1,92 @@
 {
   "required": [
-      "id",
-      "name"
+     "id",
+     "name"
   ],
   "properties": {
-      "id": {
-          "type": "integer",
-          "format": "int64"
-      },
-      "name": {
-          "type": "string"
-      },
-      "tag": {
-          "type": "string"
-      },
-      "status": {
-          "type": "string",
-          "enum": [
-              "SLEEPING",
-              "EATING",
-              "PLAYING"
-          ]
-      },
-      "numberOfLegs": {
-          "type": "integer",
-          "enum": [
-              0,
-              2,
-              4
-          ]
-      }
+     "id": {
+        "type": "integer"
+     },
+     "name": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 15
+     },
+     "tag": {
+        "type": "string"
+     },
+     "status": {
+        "type": "string",
+        "enum": [
+           "SLEEPING",
+           "EATING",
+           "PLAYING"
+        ]
+     },
+     "numberOfLegs": {
+        "type": "integer",
+        "enum": [
+           0,
+           2,
+           4
+        ]
+     },
+     "weight": {
+        "type": "number",
+        "format": "float",
+        "maximum": 300,
+        "minimum": 0,
+        "exclusiveMinimum": true
+     },
+     "secondsLived": {
+        "type": "integer",
+        "format": "int32"
+     },
+     "money": {
+        "type": "number",
+        "format": "float"
+     },
+     "happy": {
+        "type": "boolean"
+     },
+     "birthdate": {
+        "type": "string",
+        "format": "date"
+     },
+     "birth": {
+        "type": "string",
+        "format": "date-time"
+     },
+     "children": {
+        "type": "array",
+        "items": {
+           "$ref": "#/definitions/Pet"
+        },
+        "minItems": 1,
+        "maxItems": 10,
+        "uniqueItems": true
+     },
+     "ancestors": {
+        "type": "array",
+        "items": {
+           "$ref": "#/definitions/Pet"
+        },
+        "uniqueItems": true
+     },
+     "email": {
+        "type": "string",
+        "pattern": "/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$/"
+     },
+     "cities_visited": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+           "type": "string"
+        }
+     },
+     "nullable": {
+        "type": "string",
+        "x-nullable": true
+     }
   }
 }

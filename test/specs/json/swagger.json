@@ -1,158 +1,191 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "version": "1.0.0",
-        "title": "Some definitions to test a swagger model validator",
-        "license": {
-            "name": "MIT"
-        }
-    },
-    "definitions": {
-        "Pet": {
-           "$ref": "./definitions/pet.json"
-        },
-        "Pets": {
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/Pet"
-            }
-        },
-        "Dictionary": {
-            "additionalProperties": {
-                "type": "string"
-            }
-        },
-        "DictionaryOfPets": {
-            "additionalProperties": {
-                "$ref": "#/definitions/Pet"
-            }
-        },
-        "Medium": {
-            "$ref": "./definitions/medium.json"
-        },
-        "Mediums": {
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/Medium"
-            }
-        },
-        "Image": {
-            "required": [
-                "source"
-            ],
-            "allOf": [
-                {
-                    "$ref": "#/definitions/Medium"
-                }
-            ],
-            "properties": {
-                "source": {
-                    "type": "string"
-                }
-            }
-        },
-        "Video": {
-            "required": [
-                "length"
-            ],
-            "allOf": [
-                {
-                    "$ref": "#/definitions/Medium"
-                }
-            ],
-            "properties": {
-                "length": {
-                    "type": "integer"
-                }
-            }
-        },
-        "Section": {
-            "required": [
-                "sectionType"
-            ],
-            "discriminator": "sectionType",
-            "properties": {
-                "title": {
-                    "type": "string"
-                },
-                "sectionType": {
-                    "type": "string",
-                    "enum": [
-                        "TEXT_SECTION",
-                        "IMAGE_SECTION"
-                    ]
-                }
-            }
-        },
-        "TextSection": {
-            "allOf": [
-                {
-                    "$ref": "#/definitions/Section"
-                }
-            ],
-            "properties": {
-                "sectionType": {
-                    "type": "string",
-                    "enum": [
-                        "TEXT_SECTION"
-                    ]
-                },
-                "textContent": {
-                    "type": "string"
-                }
-            }
-        },
-        "ImageSection": {
-            "required": [
-                "imageSource"
-            ],
-            "allOf": [
-                {
-                    "$ref": "#/definitions/Section"
-                }
-            ],
-            "properties": {
-                "sectionType": {
-                    "type": "string",
-                    "enum": [
-                        "IMAGE_SECTION"
-                    ]
-                },
-                "imageSource": {
-                    "type": "string"
-                }
-            }
-        }
-    },
-    "paths": {
-      "/person": {
-        "post": {
-          "operationId": "PostPerson",
-          "parameters": [
-            {
-              "name": "Person",
-              "in": "body",
-              "required": true,
-              "schema": {
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 5
-                  }
-                },
-                "required": [
-                  "name"
-                ]
+  "swagger": "2.0",
+  "info": {
+     "version": "1.0.0",
+     "title": "Some definitions to test a swagger model validator",
+     "license": {
+        "name": "MIT"
+     }
+  },
+  "definitions": {
+     "Pet": {
+        "$ref": "./definitions/pet.json"
+     },
+     "Hamster": {
+        "allOf": [
+           {
+              "$ref": "#/definitions/Pet"
+           },
+           {
+              "required": [
+                 "hungry"
+              ],
+              "type": "object",
+              "properties": {
+                 "hungry": {
+                    "type": "boolean"
+                 }
               }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "ok"
-            }
-          }
+           }
+        ]
+     },
+     "Pets": {
+        "type": "array",
+        "items": {
+           "$ref": "#/definitions/Pet"
         }
-      }
-    }
+     },
+     "Dictionary": {
+        "additionalProperties": {
+           "type": "string"
+        }
+     },
+     "DictionaryOfPets": {
+        "additionalProperties": {
+           "$ref": "#/definitions/Pet"
+        }
+     },
+     "Medium": {
+        "$ref": "./definitions/medium.json"
+     },
+     "Mediums": {
+        "type": "array",
+        "items": {
+           "$ref": "#/definitions/Medium"
+        }
+     },
+     "Nullable": {
+        "properties": {
+           "test": {
+              "type": "string"
+           }
+        },
+        "x-nullable": true
+     },
+     "NullableRef": {
+        "properties": {
+           "nullableRef": {
+              "$ref": "#/definitions/Nullable"
+           }
+        }
+     },
+     "Image": {
+        "required": [
+           "source"
+        ],
+        "allOf": [
+           {
+              "$ref": "#/definitions/Medium"
+           }
+        ],
+        "properties": {
+           "source": {
+              "type": "string"
+           }
+        }
+     },
+     "Video": {
+        "required": [
+           "length"
+        ],
+        "allOf": [
+           {
+              "$ref": "#/definitions/Medium"
+           }
+        ],
+        "properties": {
+           "length": {
+              "type": "integer"
+           }
+        }
+     },
+     "Section": {
+        "required": [
+           "sectionType"
+        ],
+        "discriminator": "sectionType",
+        "properties": {
+           "title": {
+              "type": "string"
+           },
+           "sectionType": {
+              "type": "string",
+              "enum": [
+                 "TEXT_SECTION",
+                 "IMAGE_SECTION"
+              ]
+           }
+        }
+     },
+     "TextSection": {
+        "allOf": [
+           {
+              "$ref": "#/definitions/Section"
+           }
+        ],
+        "properties": {
+           "sectionType": {
+              "type": "string",
+              "enum": [
+                 "TEXT_SECTION"
+              ]
+           },
+           "textContent": {
+              "type": "string"
+           }
+        }
+     },
+     "ImageSection": {
+        "required": [
+           "imageSource"
+        ],
+        "allOf": [
+           {
+              "$ref": "#/definitions/Section"
+           }
+        ],
+        "properties": {
+           "sectionType": {
+              "type": "string",
+              "enum": [
+                 "IMAGE_SECTION"
+              ]
+           },
+           "imageSource": {
+              "type": "string"
+           }
+        }
+     }
+  },
+  "paths": {
+     "/person": {
+        "post": {
+           "operationId": "PostPerson",
+           "parameters": [
+              {
+                 "name": "Person",
+                 "in": "body",
+                 "required": true,
+                 "schema": {
+                    "properties": {
+                       "name": {
+                          "type": "string",
+                          "minLength": 2,
+                          "maxLength": 5
+                       }
+                    },
+                    "required": [
+                       "name"
+                    ]
+                 }
+              }
+           ],
+           "responses": {
+              "200": {
+                 "description": "ok"
+              }
+           }
+        }
+     }
+  }
 }
