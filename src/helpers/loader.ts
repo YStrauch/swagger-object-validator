@@ -6,7 +6,7 @@ import { safeLoad } from 'js-yaml';
 import * as path from 'path';
 import { ISpec, ISchema} from '../specs'
 import { IValidatorConfig, IValidatorDebugConfig } from '../validator-config';
-
+import { getTypeName } from './getTypeName';
 
 let HTTPCache: {
   [url: string]: Promise<string>
@@ -40,7 +40,13 @@ export function loader(input: ISpec | string, config: IValidatorConfig): Promise
   } else if (!input) {
     return Promise.resolve(null);
   } else {
-    return Promise.resolve(JSON.parse(JSON.stringify(input)));
+    // Ensure we are not manipulating anything that the user has a reference to
+    let spec: ISpec = JSON.parse(JSON.stringify(input));
+
+    // Ensure all relative paths are resolved to absolute paths
+    spec = convertRefsToAbsolute(config.partialsDir, spec);
+
+    return Promise.resolve(spec);
   }
 }
 
@@ -85,15 +91,6 @@ export function loadSchema(schema: ISchema, spec: ISpec, config: IValidatorConfi
   return _loadFromString(schema.$ref, config, spec).then(dereferencedSchema => replaceRef(schema, dereferencedSchema));
 }
 
-// function loadLocalSchema(schema: ISchema, spec: ISpec, config: IValidatorConfig): Promise<ISchema> {
-//   if (schema.$ref.indexOf('#/') === 0) {
-//     return loadSchema(resolveInternalPath(schema.$ref, spec), spec, config);
-//   }
-
-//   return loader(join(config.partialsDir, schema.$ref), config)
-//     .then(dereferencedSchema => replaceRef(schema, dereferencedSchema));
-// }
-
 // after a reference was loaded, replace it so it won't be dereferenced twice
 function replaceRef(schema: ISchema, dereferencedSchema: ISchema) {
   delete schema.$ref;
@@ -111,6 +108,9 @@ function _loadFromString(fullPath: string, config: IValidatorConfig, spec?: ISpe
   let [filePath, internalPath] = splitPath(fullPath);
   const extension = path.extname(filePath);
 
+  // cwd of the child can change
+  let childCwd = config.partialsDir;
+
   let contents: Promise<any>;
   if (!filePath) {
     // Internal Reference
@@ -125,13 +125,29 @@ function _loadFromString(fullPath: string, config: IValidatorConfig, spec?: ISpe
   } else if (_needsDownload(filePath)) {
     // Download
     contents = _download(filePath, config);
+  // } else if (_needsDownload(childCwd)) {
+  //   // the cwd was set to a URL, do we need this?
+  //   if (filePath.startsWith('/')) {
+  //     // absolute path from the website cwd root
+  //     const url = new URL(filePath);
+  //     childCwd = url.protocol + '//' + url.hostname;
+  //     contents = _download(childCwd + filePath, config);
+  //   } else {
+  //     // relative path from server cwd
+  //     if (!childCwd.endsWith('/') && !filePath.startsWith('/')) {
+  //       // add missing separator
+  //       filePath += '/'
+  //     }
+  //     childCwd = path.dirname(childCwd+filePath);
+  //     contents = _download(childCwd+filePath, config);
+  //   }
   } else {
     // Local File System
     if (!path.isAbsolute(filePath)) {
-      filePath = path.resolve(process.cwd(), config.partialsDir || '', filePath);
-    } else {
-      filePath = path.resolve(filePath);
+      throw Error('Non-absolute path found, internal logic should have converted relative paths to absolute')
     }
+
+    childCwd = path.dirname(filePath);
 
     if (!existsSync || !readFile) {
       return Promise.reject('Cannot read file system, seems like you are using this module in frontend');
@@ -160,12 +176,48 @@ function _loadFromString(fullPath: string, config: IValidatorConfig, spec?: ISpe
     return Promise.reject(`File extension ${extension} is not supported`);
   }
 
-  // Resolve inner path if needed
+  // Convert all relative paths to absolute to ensure proper resolution later
+  contents = contents.then(obj => convertRefsToAbsolute(childCwd, obj))
+
+  // Resolve internal #/ path if needed
   if (internalPath) {
     contents = contents.then(obj => resolveInternalPath(internalPath, obj))
   }
 
   return contents;
+}
+
+function convertRefsToAbsolute(cwd: string, obj: any) {
+  if (!cwd.endsWith('/')) {
+    cwd += '/';
+  }
+
+  switch (getTypeName(obj)) {
+    case 'array':
+      for (let prop of <Array<any>> obj) {
+        convertRefsToAbsolute(cwd, prop);
+      }
+      break;
+
+    case 'object':
+      if (obj.hasOwnProperty('$ref')) {
+        const ref: string = <string> obj['$ref'];
+        if (!_needsDownload(ref) && !ref.startsWith('/') && !ref.startsWith('#/')) {
+          // Check if this works for URLs
+          obj['$ref'] = cwd + obj['$ref'];
+        }
+      }
+
+      for (let propertyName in obj) {
+        convertRefsToAbsolute(cwd, obj[propertyName]);
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  return obj;
 }
 
 function _needsDownload(path: string) {

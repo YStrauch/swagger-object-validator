@@ -45,7 +45,7 @@ properties:
   children:
     type: array
     items:
-      $ref: '#/definitions/Pet'
+      $ref: './pet.yml'
     minItems: 1
     maxItems: 10
     uniqueItems: true

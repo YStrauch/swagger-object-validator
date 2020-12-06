@@ -21,7 +21,7 @@ export class Handler {
     config = config || {};
     // Apply defaults
     if (config.partialsDir === undefined) {
-      config.partialsDir = './';
+      config.partialsDir = process.cwd();
     }
 
     if (config.disableUniqueItemsOver === undefined) {
@@ -30,7 +30,6 @@ export class Handler {
 
     this.config = config;
     this.swaggerSpec = loader(swaggerSpec, config);
-
   }
 
 
