@@ -1,3 +1,4 @@
+![tests](https://github.com/YStrauch/swagger-object-validator/actions/workflows/actions.yml/badge.svg)
 # What?
 Validate an Object against a given [swagger (V2.0)](http://swagger.io/specification/) API definition.
 > A swagger definition specifies an API with requests and data models, and there are a lot of compilers to create server and client skeletons. There are some tools that validate the requests that were sent to the server, but surprisingly there is a huge lack of (good) validators for response bodies.
@@ -535,9 +536,20 @@ Missing required property:
 - Added support for `uniqueItems`. Please also read about the default cap of 100 items [here](#Limiting-the-Unique-Items-Constraint).
 
 # Development
-Wanna help? Sure. Please make sure to use an IDE with TSLint and EditorConfig installed. Always work test-driven, for each feature or bug you fix there needs to be a test.
+
+## Technical Setup
+Install node.js. Then run: `npm install --global yarn; yarn install`.
+Please make sure to use an IDE with TSLint and EditorConfig installed (i.e. Visual Studio Code).
+
+## Development
+This project is entirely test-driven. You can run tests locally like this:
 
 ```bash
 npm run-script watch:test # Build the application, run tests and watch the FS
 npm run-script debug # Very useful to trace bugs. You need a remote debugging software, I use VSCode debugger
 ```
+
+Tests need to have **minimum** code to test the desired effect. Don't include huge swagger specs.
+
+## Pull-Requests
+Please ensure that your pull request includes tests that demonstrate the feature or bug fix and that your code conforms to the TSLint specifications in this project.
