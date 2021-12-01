@@ -1,5 +1,5 @@
 import * as Promise from 'bluebird';
-import { ISpec, ISchema} from '../specs'
+import { ISpec, ISchema } from '../specs'
 import { IValidatorConfig } from '../validator-config';
 import { extendAllAllOfs } from '../helpers/allOf';
 import { getTypeName } from '../helpers/getTypeName';
@@ -39,6 +39,11 @@ function validateResolvedModel(test: any, schema: ISchema, spec: ISpec, config: 
   let validator = validateType;
   if (schema.enum) {
     validator = validateEnum;
+  }
+
+  // add allOf check and loopback to validation again
+  if (schema.allOf && schema.allOf.length && !schema.properties) {
+    return validateModel(test, schema, spec, config, trace);
   }
 
   return validator(test, schema, spec, config, trace)
