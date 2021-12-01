@@ -34,7 +34,7 @@
     "@types/bluebird": "^3.5.36",
     "@types/swagger-schema-official": "2.0.15",
     "bluebird": "^3.7.2",
-    "js-yaml": "^3.14.0"
+    "js-yaml": "^4.1.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.14",
