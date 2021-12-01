@@ -1,5 +1,8 @@
-on: push
-
+name: Release to NPM
+on:
+  push:
+    branches:
+      - master
 jobs:
   publish:
     runs-on: ubuntu-latest
