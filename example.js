@@ -15,5 +15,5 @@ validator.validateModel(pet, 'Pet', function (err, result) {
   console.log(result.humanReadable());
 
   // JSON result for computational interpretation
-  console.log(JSON.stringify(result.errorsWithStringTypes(), undefined, 2))
+  console.log(JSON.stringify(result, undefined, 2))
 });
