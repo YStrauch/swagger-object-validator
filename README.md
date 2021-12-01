@@ -1,4 +1,4 @@
-![tests](https://github.com/YStrauch/swagger-object-validator/actions/workflows/actions.yml/badge.svg)
+![tests](https://github.com/YStrauch/swagger-object-validator/actions/workflows/test.yml/badge.svg)
 # What?
 Validate an Object against a given [swagger (V2.0)](http://swagger.io/specification/) API definition.
 > A swagger definition specifies an API with requests and data models, and there are a lot of compilers to create server and client skeletons. There are some tools that validate the requests that were sent to the server, but surprisingly there is a huge lack of (good) validators for response bodies.

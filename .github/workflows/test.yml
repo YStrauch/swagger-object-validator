@@ -1,4 +1,4 @@
-name: Build and run tests
+name: Run tests
 on: [push, pull_request]
 jobs:
   build:
@@ -15,4 +15,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: yarn --frozen-lockfile
+      - run: npm run-script lint
       - run: npm run-script test
