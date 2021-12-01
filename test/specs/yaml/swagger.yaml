@@ -20,11 +20,14 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Pet'
-
+  WrappedHamster:
+    type: object
+    properties:
+      hamster:
+        $ref: '#/definitions/Hamster'
   Dictionary:
     additionalProperties:
       type: string
-
   DictionaryOfPets:
     additionalProperties:
       $ref: '#/definitions/Pet'

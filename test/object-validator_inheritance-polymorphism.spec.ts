@@ -190,8 +190,22 @@ describe('ObjectValidator', () => {
 
       done();
     }).catch(err => done(new Error(err)));
+  });
 
+  it('should validate allOf inheritance with $ref', (done) => {
+    let wrapped_hamster = {
+      hamster: {
+        id: 123,
+        name: 'Fred',
+        hungry: true
+      }
+    }
 
+    validator.validateModel(wrapped_hamster, 'WrappedHamster').then(result => {
+      expect(result.errors).to.length(0);
+
+      done();
+    }).catch(err => done(new Error(err)));
   });
 
 });
