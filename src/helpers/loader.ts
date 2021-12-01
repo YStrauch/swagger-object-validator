@@ -2,7 +2,7 @@ import * as Promise from 'bluebird';
 import { existsSync, readFile } from 'fs';
 import { ClientRequest, get as httpGet, IncomingMessage } from 'http';
 import { get as httpsGet } from 'https';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import * as path from 'path';
 import { ISpec, ISchema} from '../specs'
 import { IValidatorConfig, IValidatorDebugConfig } from '../validator-config';
@@ -171,7 +171,7 @@ function _loadFromString(fullPath: string, config: IValidatorConfig, spec?: ISpe
   if (extension === '.json') {
     contents = contents.then(file => JSON.parse(file));
   } else if (extension === '.yaml' || extension === '.yml') {
-    contents = contents.then(file => <any> safeLoad(file));
+    contents = contents.then(file => <any> load(file));
   } else {
     return Promise.reject(`File extension ${extension} is not supported`);
   }
