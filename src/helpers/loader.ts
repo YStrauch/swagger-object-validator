@@ -144,7 +144,8 @@ function _loadFromString(fullPath: string, config: IValidatorConfig, spec?: ISpe
   } else {
     // Local File System
     if (!path.isAbsolute(filePath)) {
-      throw Error('Non-absolute path found, internal logic should have converted relative paths to absolute')
+      // this should only be the case when initialising the Handler with a relative path, all other paths should be converted to absolute already
+      filePath = path.join(config.partialsDir, filePath);
     }
 
     childCwd = path.dirname(filePath);

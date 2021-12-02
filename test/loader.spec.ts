@@ -22,6 +22,18 @@ describe('Loader', () => {
     }).catch(err => done(new Error(err)));
   });
 
+  it('should load a yaml file with relative path', (done) => {
+    let validator = new Handler(join('test', 'specs', 'yaml', 'swagger.yaml'));
+    let pet = {
+      id: 123,
+      name: 'Doge'
+    };
+    validator.validateModel(pet, '#/definitions/Pet').then(result => {
+      expect(result.errors).to.empty;
+      done();
+    }).catch(err => done(new Error(err)));
+  });
+
   it('should load a yaml file and validate pet by path', (done) => {
     let dir = join(__dirname, 'specs', 'yaml');
     let yaml = join(dir, 'swagger.yaml');
