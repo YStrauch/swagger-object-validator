@@ -127,10 +127,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.0.tgz#67c7b724e1bcdd7a8821ce0d5ee184d3b4dd525a"
   integrity sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==
 
-"@types/swagger-schema-official@<2.0.18":
-  version "2.0.17"
-  resolved "https://registry.yarnpkg.com/@types/swagger-schema-official/-/swagger-schema-official-2.0.17.tgz#c9086ec36ce00ae21e5a73a507c8fc94938f17e1"
-  integrity sha512-+lvLQ9GHI49zzXMNABVbsyCYXFdflW5IMUM/hgqEEholSyUwdsovwTohx2kQIDrhJOUAZjskOHbeWPy/xbAdqA==
+"@types/swagger-schema-official@<2.0.23":
+  version "2.0.22"
+  resolved "https://registry.yarnpkg.com/@types/swagger-schema-official/-/swagger-schema-official-2.0.22.tgz#f7e06168e6994574dfd86928ac04b196870ab043"
+  integrity sha512-7yQiX6MWSFSvc/1wW5smJMZTZ4fHOd+hqLr3qr/HONDxHEa2bnYAsOcGBOEqFIjd4yetwMOdEDdeW+udRAQnHA==
 
 "@typescript-eslint/eslint-plugin@^5.0.0":
   version "5.28.0"
